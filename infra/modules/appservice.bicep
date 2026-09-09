@@ -14,6 +14,22 @@ param location string
 @description('Node.js runtime version')
 param nodeVersion string = '22-lts'
 
+@description('SQL Server fully qualified domain name')
+param dbServerFqdn string
+
+@description('SQL Database name')
+param dbDatabaseName string
+
+@description('SQL admin login (used by the app to connect)')
+param dbAdminLogin string
+
+@secure()
+@description('SQL admin password (used by the app to connect)')
+param dbAdminPassword string
+
+@description('Application Insights connection string (optional; set manually after first Application Insights setup)')
+param appInsightsConnectionString string = ''
+
 var appServicePlanName = 'asp-azureops-${environment}'
 var appServiceName = 'app-azureops-${environment}'
 
@@ -50,6 +66,28 @@ resource appService 'Microsoft.Web/sites@2023-12-01' = {
       linuxFxVersion: 'NODE|${nodeVersion}'
       appCommandLine: 'npm start'
       alwaysOn: false // not available on Free tier
+      appSettings: [
+        {
+          name: 'DB_SERVER'
+          value: dbServerFqdn
+        }
+        {
+          name: 'DB_DATABASE'
+          value: dbDatabaseName
+        }
+        {
+          name: 'DB_USER'
+          value: dbAdminLogin
+        }
+        {
+          name: 'DB_PASSWORD'
+          value: dbAdminPassword
+        }
+        {
+          name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+          value: appInsightsConnectionString
+        }
+      ]
     }
   }
 }

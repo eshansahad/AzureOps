@@ -21,6 +21,7 @@ if (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING) {
 
 const express = require('express');
 const path = require('path');
+const { getPool } = require('./db');
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -46,6 +47,33 @@ app.get('/api/status', (req, res) => {
       'Azure App Service'
     ]
   });
+});
+
+// Live database-backed routes
+app.get('/api/users', async (req, res) => {
+  try {
+    const pool = await getPool();
+    const result = await pool.request().query(
+      'SELECT UserId, DisplayName, Email, Role, CreatedAt FROM Users ORDER BY UserId'
+    );
+    res.status(200).json(result.recordset);
+  } catch (err) {
+    console.error('Database query failed:', err.message);
+    res.status(500).json({ error: 'Unable to reach the database', detail: err.message });
+  }
+});
+
+app.get('/api/environments', async (req, res) => {
+  try {
+    const pool = await getPool();
+    const result = await pool.request().query(
+      'SELECT EnvironmentId, Name, EnvironmentType, Status, CreatedAt FROM Environments ORDER BY EnvironmentId'
+    );
+    res.status(200).json(result.recordset);
+  } catch (err) {
+    console.error('Database query failed:', err.message);
+    res.status(500).json({ error: 'Unable to reach the database', detail: err.message });
+  }
 });
 
 app.listen(port, () => {

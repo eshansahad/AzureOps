@@ -21,8 +21,8 @@ param location string = 'eastus'
 @description('Azure region for SQL resources (may differ due to subscription quota restrictions)')
 param sqlLocation string = 'westus'
 
-@description('Azure region for App Service (changed to avoid F1 quota restriction in westus)')
-param appServiceLocation string = 'centralus'
+@description('Azure region for App Service (may differ due to subscription quota restrictions)')
+param appServiceLocation string = 'westus'
 
 @description('SQL Server administrator login')
 param sqlAdminLogin string = 'eshan'
@@ -33,6 +33,9 @@ param sqlAdminPassword string
 
 @description('Your public IP address, allowed through the SQL firewall for management access')
 param clientIpAddress string
+
+@description('Application Insights connection string (copy from the Application Insights resource after first creation)')
+param appInsightsConnectionString string = ''
 
 var namePrefix = 'azureops'
 var resourceGroupName = 'rg-${namePrefix}-${environment}'
@@ -73,6 +76,11 @@ module appService 'modules/appservice.bicep' = {
   params: {
     environment: environment
     location: appServiceLocation
+    dbServerFqdn: sql.outputs.sqlServerFqdn
+    dbDatabaseName: sql.outputs.sqlDatabaseName
+    dbAdminLogin: sqlAdminLogin
+    dbAdminPassword: sqlAdminPassword
+    appInsightsConnectionString: appInsightsConnectionString
   }
 }
 

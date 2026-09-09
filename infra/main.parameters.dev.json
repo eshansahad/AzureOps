@@ -17,13 +17,16 @@
     "sqlAdminPassword": {
       "reference": {
         "keyVault": {
-          "id": "/subscriptions/<subscription-id>/resourceGroups/rg-azureops-dev/providers/Microsoft.KeyVault/vaults/kv-azureops-dev"
+          "id": "/subscriptions/60863259-4301-4432-93cc-752c4c6521a4/resourceGroups/rg-azureops-dev/providers/Microsoft.KeyVault/vaults/kv-azureops-dev"
         },
         "secretName": "sql-admin-password"
       }
     },
     "clientIpAddress": {
-      "value": "<your-client-ip>"
+      "value": "111.92.105.211"
+    },
+    "appInsightsConnectionString": {
+      "value": "InstrumentationKey=693b2197-ea1d-4e4c-a3f6-f8e914f141df;IngestionEndpoint=https://centralus-2.in.applicationinsights.azure.com/;LiveEndpoint=https://centralus.livediagnostics.monitor.azure.com/;ApplicationId=157801b4-e913-48c5-b0fe-73f959d04baa"
     }
   }
 }
