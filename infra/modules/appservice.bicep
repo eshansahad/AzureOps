@@ -12,7 +12,7 @@ param environment string
 param location string
 
 @description('Node.js runtime version')
-param nodeVersion string = '20-lts'
+param nodeVersion string = '22-lts'
 
 var appServicePlanName = 'asp-azureops-${environment}'
 var appServiceName = 'app-azureops-${environment}'
