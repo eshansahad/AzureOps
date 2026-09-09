@@ -22,7 +22,7 @@ param location string = 'eastus'
 param sqlLocation string = 'westus'
 
 @description('Azure region for App Service (may differ due to subscription quota restrictions)')
-param appServiceLocation string = 'westus'
+param appServiceLocation string = 'centralus'
 
 @description('SQL Server administrator login')
 param sqlAdminLogin string = 'eshan'
