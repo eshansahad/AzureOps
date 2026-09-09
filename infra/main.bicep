@@ -21,6 +21,9 @@ param location string = 'eastus'
 @description('Azure region for SQL resources (may differ due to subscription quota restrictions)')
 param sqlLocation string = 'westus'
 
+@description('Azure region for App Service (may differ due to subscription quota restrictions)')
+param appServiceLocation string = 'westus'
+
 @description('SQL Server administrator login')
 param sqlAdminLogin string = 'eshan'
 
@@ -69,7 +72,7 @@ module appService 'modules/appservice.bicep' = {
   scope: rg
   params: {
     environment: environment
-    location: location
+    location: appServiceLocation
   }
 }
 
