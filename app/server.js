@@ -5,6 +5,20 @@
 // incidents) and Entra ID authentication in later phases.
 // =====================================================================
 
+// Application Insights MUST be initialized before any other imports
+// so it can auto-instrument HTTP requests, dependencies, and errors.
+const appInsights = require('applicationinsights');
+if (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING) {
+  appInsights
+    .setup()
+    .setAutoCollectRequests(true)
+    .setAutoCollectPerformance(true, true)
+    .setAutoCollectExceptions(true)
+    .setAutoCollectDependencies(true)
+    .setSendLiveMetrics(true)
+    .start();
+}
+
 const express = require('express');
 const path = require('path');
 

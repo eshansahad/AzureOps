@@ -10,6 +10,7 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
+    "applicationinsights": "^2.9.5",
     "express": "^4.19.2"
   }
 }
