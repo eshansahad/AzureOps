@@ -1,0 +1,32 @@
+name: Deploy Database Schema
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'sql/**'
+  workflow_dispatch:
+
+jobs:
+  apply-schema:
+    name: Apply schema.sql to Azure SQL
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install sqlcmd
+        run: |
+          curl https://packages.microsoft.com/keys/microsoft.asc | sudo tee /etc/apt/trusted.gpg.d/microsoft.asc
+          curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
+          sudo apt-get update
+          sudo ACCEPT_EULA=Y apt-get install -y mssql-tools18 unixodbc-dev
+          echo "/opt/mssql-tools18/bin" >> $GITHUB_PATH
+
+      - name: Run schema.sql
+        run: |
+          sqlcmd -S ${{ secrets.SQL_SERVER_FQDN }} \
+                 -d sqldb-azureops-dev \
+                 -U ${{ secrets.SQL_ADMIN_LOGIN }} \
+                 -P ${{ secrets.SQL_ADMIN_PASSWORD }} \
+                 -i sql/schema.sql \
+                 -N -C

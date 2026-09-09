@@ -1,0 +1,49 @@
+name: Deploy Infrastructure (Bicep)
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'infra/**'
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Bicep
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint Bicep templates
+        run: az bicep build --file infra/main.bicep
+
+  deploy:
+    name: Deploy to Azure
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: dev
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy Bicep (subscription scope)
+        uses: azure/arm-deploy@v2
+        with:
+          scope: subscription
+          region: eastus
+          template: infra/main.bicep
+          parameters: >
+            environment=dev
+            clientIpAddress=${{ secrets.CLIENT_IP_ADDRESS }}
+            sqlAdminPassword=${{ secrets.SQL_ADMIN_PASSWORD }}
+          deploymentName: azureops-infra-${{ github.run_number }}

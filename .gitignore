@@ -1,0 +1,19 @@
+# Bicep build output
+*.json.bak
+bicepconfig.json.bak
+
+# Local secrets / env files
+*.env
+.env.local
+*.pfx
+*.publishsettings
+
+# OS / editor
+.DS_Store
+.vscode/
+*.swp
+
+# Node (future app code)
+node_modules/
+dist/
+build/
