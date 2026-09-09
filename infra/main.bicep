@@ -64,7 +64,17 @@ module sql 'modules/sql.bicep' = {
   }
 }
 
+module appService 'modules/appservice.bicep' = {
+  name: 'deploy-appservice'
+  scope: rg
+  params: {
+    environment: environment
+    location: location
+  }
+}
+
 output resourceGroupName string = rg.name
 output keyVaultName string = keyVault.outputs.keyVaultName
 output sqlServerFqdn string = sql.outputs.sqlServerFqdn
 output sqlDatabaseName string = sql.outputs.sqlDatabaseName
+output appServiceHostname string = appService.outputs.appServiceDefaultHostname

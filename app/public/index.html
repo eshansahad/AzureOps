@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AzureOps Portal</title>
+<style>
+  :root {
+    --bg: #0b1220;
+    --panel: #121a2b;
+    --border: #223049;
+    --text: #e6ecf5;
+    --muted: #8ea0bd;
+    --accent: #3b82f6;
+    --accent-soft: rgba(59, 130, 246, 0.12);
+    --ok: #22c55e;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
+    background: radial-gradient(circle at 20% 0%, #101b30 0%, var(--bg) 55%);
+    color: var(--text);
+    min-height: 100vh;
+  }
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    font-size: 18px;
+    letter-spacing: 0.2px;
+  }
+  .brand .mark {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), #8b5cf6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent-soft);
+    border: 1px solid rgba(59, 130, 246, 0.35);
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 13px;
+    color: var(--accent);
+  }
+  .status-pill .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--ok);
+    box-shadow: 0 0 8px var(--ok);
+  }
+  main {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 56px 24px 80px;
+  }
+  .hero h1 {
+    font-size: 34px;
+    margin: 0 0 12px;
+    letter-spacing: -0.5px;
+  }
+  .hero p {
+    color: var(--muted);
+    font-size: 16px;
+    max-width: 620px;
+    line-height: 1.6;
+    margin: 0 0 40px;
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+  }
+  .card .label {
+    color: var(--muted);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 8px;
+  }
+  .card .value {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .card .value.ok { color: var(--ok); }
+  .services {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+  }
+  .services h2 {
+    margin: 0 0 6px;
+    font-size: 16px;
+  }
+  .services p {
+    color: var(--muted);
+    font-size: 13px;
+    margin: 0 0 20px;
+  }
+  .service-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .service-list li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13px;
+    color: var(--text);
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .service-list li::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ok);
+    flex-shrink: 0;
+  }
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12px;
+    padding: 24px;
+  }
+</style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="mark">A</div>
+      AzureOps Portal
+    </div>
+    <div class="status-pill"><span class="dot"></span> Online</div>
+  </header>
+
+  <main>
+    <div class="hero">
+      <h1>Enterprise Cloud Operations Platform</h1>
+      <p>
+        Centralized environment management, deployments, monitoring, and
+        incident response — built on Azure App Service, SQL Database,
+        Key Vault, and Microsoft Entra ID.
+      </p>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <div class="label">Environment</div>
+        <div class="value">Development</div>
+      </div>
+      <div class="card">
+        <div class="label">Hosted On</div>
+        <div class="value">Azure App Service</div>
+      </div>
+      <div class="card">
+        <div class="label">Database</div>
+        <div class="value ok">Connected (SQL Serverless)</div>
+      </div>
+      <div class="card">
+        <div class="label">Build</div>
+        <div class="value">Deployed via GitHub Actions</div>
+      </div>
+    </div>
+
+    <div class="services">
+      <h2>Services integrated so far</h2>
+      <p>Provisioned via Bicep, secured with Key Vault + RBAC.</p>
+      <ul class="service-list">
+        <li>Microsoft Entra ID</li>
+        <li>Azure Key Vault</li>
+        <li>Azure SQL Database</li>
+        <li>Azure App Service</li>
+        <li>GitHub Actions CI/CD</li>
+        <li>Azure Resource Manager / Bicep</li>
+      </ul>
+    </div>
+  </main>
+
+  <footer>AzureOps &mdash; portfolio project demonstrating Azure Cloud &amp; DevOps engineering</footer>
+</body>
+</html>
