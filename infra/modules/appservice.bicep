@@ -1,8 +1,8 @@
 // =====================================================================
 // AzureOps — App Service Module
-// Deploys a Linux App Service Plan (Free tier) + Web App running
-// Node.js, with a system-assigned managed identity for future
-// Key Vault / SQL access without stored credentials.
+// Deploys a Linux App Service Plan (Basic B1 tier) + Web App running
+// Node.js, with a system-assigned managed identity.
+// B1 allows hosting both the Web App and Function App on the same plan.
 // =====================================================================
 
 @description('Environment name (dev, test, stage, prod)')
@@ -41,8 +41,11 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2023-12-01' = {
     Environment: environment
   }
   sku: {
-    name: 'F1'
-    tier: 'Free'
+    name: 'B1'
+    tier: 'Basic'
+    size: 'B1'
+    family: 'B'
+    capacity: 1
   }
   properties: {
     reserved: true // required for Linux
@@ -65,7 +68,7 @@ resource appService 'Microsoft.Web/sites@2023-12-01' = {
     siteConfig: {
       linuxFxVersion: 'NODE|${nodeVersion}'
       appCommandLine: 'npm start'
-      alwaysOn: false // not available on Free tier
+      alwaysOn: true // Allowed on B1 tier
       appSettings: [
         {
           name: 'DB_SERVER'

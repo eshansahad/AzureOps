@@ -1,7 +1,7 @@
 // =====================================================================
 // AzureOps — Azure Functions Module
 // Deploys a Storage Account and hosts the Linux Function App
-// on the existing App Service Plan to avoid resource group stamp conflicts.
+// on the existing B1 App Service Plan.
 // =====================================================================
 
 @description('Environment name (dev, test, stage, prod)')
@@ -50,7 +50,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
 }
 
-// Linux Function App attached to existing App Service Plan
+// Linux Function App attached to the shared B1 App Service Plan
 resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   name: functionAppName
   location: location
@@ -68,6 +68,7 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
     httpsOnly: true
     siteConfig: {
       linuxFxVersion: 'Node|20'
+      alwaysOn: true
       appSettings: [
         {
           name: 'AzureWebJobsStorage'
