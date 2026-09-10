@@ -24,6 +24,9 @@ param sqlLocation string = 'westus'
 @description('Azure region for App Service (may differ due to subscription quota restrictions)')
 param appServiceLocation string = 'centralus'
 
+@description('Azure region for Azure Functions resources (may differ due to subscription quota restrictions)')
+param functionsLocation string = 'centralus'
+
 @description('SQL Server administrator login')
 param sqlAdminLogin string = 'eshan'
 
@@ -84,8 +87,23 @@ module appService 'modules/appservice.bicep' = {
   }
 }
 
+module functions 'modules/functions.bicep' = {
+  name: 'deploy-functions'
+  scope: rg
+  params: {
+    environment: environment
+    location: functionsLocation
+    dbServerFqdn: sql.outputs.sqlServerFqdn
+    dbDatabaseName: sql.outputs.sqlDatabaseName
+    dbAdminLogin: sqlAdminLogin
+    dbAdminPassword: sqlAdminPassword
+    appInsightsConnectionString: appInsightsConnectionString
+  }
+}
+
 output resourceGroupName string = rg.name
 output keyVaultName string = keyVault.outputs.keyVaultName
 output sqlServerFqdn string = sql.outputs.sqlServerFqdn
 output sqlDatabaseName string = sql.outputs.sqlDatabaseName
 output appServiceHostname string = appService.outputs.appServiceDefaultHostname
+output functionAppHostname string = functions.outputs.functionAppDefaultHostname

@@ -1,0 +1,13 @@
+{
+  "name": "azureops-functions",
+  "version": "0.1.0",
+  "description": "AzureOps — event-driven automation and incident remediation functions",
+  "main": "src/functions/*.js",
+  "scripts": {
+    "start": "func start"
+  },
+  "dependencies": {
+    "@azure/functions": "^4.5.1",
+    "mssql": "^10.0.2"
+  }
+}

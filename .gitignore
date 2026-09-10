@@ -17,3 +17,6 @@ bicepconfig.json.bak
 node_modules/
 dist/
 build/
+
+# Azure Functions local dev
+local.settings.json

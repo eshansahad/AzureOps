@@ -1,0 +1,7 @@
+local.settings.json
+.vscode
+node_modules/.cache
+.git*
+.vscode
+test
+tests
