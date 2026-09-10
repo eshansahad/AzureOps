@@ -27,9 +27,11 @@ param dbAdminPassword string
 @description('Application Insights connection string (optional)')
 param appInsightsConnectionString string = ''
 
+@description('Resource ID of the existing App Service Plan to host this Function App on (shared with the web app to avoid Dynamic/Dedicated Linux plan conflicts in the same resource group)')
+param appServicePlanId string
+
 var storageAccountName = 'stazureops${environment}'
 var functionAppName = 'func-azureops-${environment}'
-var functionPlanName = 'plan-func-azureops-${environment}'
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: storageAccountName
@@ -48,22 +50,6 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
 }
 
-resource functionPlan 'Microsoft.Web/serverfarms@2023-12-01' = {
-  name: functionPlanName
-  location: location
-  tags: {
-    Project: 'AzureOps'
-    Environment: environment
-  }
-  sku: {
-    name: 'Y1'
-    tier: 'Dynamic'
-  }
-  properties: {
-    reserved: true // Linux
-  }
-}
-
 resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   name: functionAppName
   location: location
@@ -76,7 +62,7 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
     type: 'SystemAssigned'
   }
   properties: {
-    serverFarmId: functionPlan.id
+    serverFarmId: appServicePlanId
     httpsOnly: true
     siteConfig: {
       linuxFxVersion: 'Node|20'

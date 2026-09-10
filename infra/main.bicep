@@ -98,6 +98,7 @@ module functions 'modules/functions.bicep' = {
     dbAdminLogin: sqlAdminLogin
     dbAdminPassword: sqlAdminPassword
     appInsightsConnectionString: appInsightsConnectionString
+    appServicePlanId: appService.outputs.appServicePlanId
   }
 }
 

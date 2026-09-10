@@ -95,3 +95,4 @@ resource appService 'Microsoft.Web/sites@2023-12-01' = {
 output appServiceName string = appService.name
 output appServiceDefaultHostname string = appService.properties.defaultHostName
 output appServicePrincipalId string = appService.identity.principalId
+output appServicePlanId string = appServicePlan.id
