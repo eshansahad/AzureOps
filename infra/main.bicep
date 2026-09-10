@@ -21,11 +21,8 @@ param location string = 'eastus'
 @description('Azure region for SQL resources (may differ due to subscription quota restrictions)')
 param sqlLocation string = 'westus'
 
-@description('Azure region for App Service (may differ due to subscription quota restrictions)')
+@description('Azure region for App Service & Functions')
 param appServiceLocation string = 'centralus'
-
-@description('Azure region for Azure Functions resources (may differ due to subscription quota restrictions)')
-param functionsLocation string = 'centralus'
 
 @description('SQL Server administrator login')
 param sqlAdminLogin string = 'eshan'
@@ -92,7 +89,8 @@ module functions 'modules/functions.bicep' = {
   scope: rg
   params: {
     environment: environment
-    location: functionsLocation // Make sure this points to centralus
+    location: appServiceLocation
+    appServicePlanId: appService.outputs.appServicePlanId
     dbServerFqdn: sql.outputs.sqlServerFqdn
     dbDatabaseName: sql.outputs.sqlDatabaseName
     dbAdminLogin: sqlAdminLogin

@@ -1,8 +1,7 @@
 // =====================================================================
 // AzureOps — Azure Functions Module
-// Deploys a Storage Account (required Functions dependency) and a
-// Consumption-plan Linux Function App running Node.js, used for
-// event-driven automation and incident remediation workflows.
+// Deploys a Storage Account and hosts the Linux Function App
+// on the existing App Service Plan to avoid resource group stamp conflicts.
 // =====================================================================
 
 @description('Environment name (dev, test, stage, prod)')
@@ -10,6 +9,9 @@ param environment string
 
 @description('Azure region for Functions resources')
 param location string
+
+@description('Existing App Service Plan ID to host the Function App')
+param appServicePlanId string
 
 @description('SQL Server fully qualified domain name (function writes incidents here)')
 param dbServerFqdn string
@@ -29,7 +31,6 @@ param appInsightsConnectionString string = ''
 
 var storageAccountName = 'stazureops${environment}'
 var functionAppName = 'func-azureops-${environment}'
-var hostingPlanName = 'asp-functions-${environment}'
 
 // Storage Account required for Azure Functions runtime state & triggers
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
@@ -49,24 +50,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
 }
 
-// Serverless Consumption Plan (Y1) required for Linux Function Apps
-resource hostingPlan 'Microsoft.Web/serverFarms@2023-12-01' = {
-  name: hostingPlanName
-  location: location
-  tags: {
-    Project: 'AzureOps'
-    Environment: environment
-  }
-  sku: {
-    name: 'Y1'
-    tier: 'Dynamic'
-  }
-  properties: {
-    reserved: true // Mandatory for Linux hosting
-  }
-}
-
-// Linux Function App
+// Linux Function App attached to existing App Service Plan
 resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   name: functionAppName
   location: location
@@ -79,8 +63,8 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
     type: 'SystemAssigned'
   }
   properties: {
-    serverFarmId: hostingPlan.id
-    reserved: true // Mandatory for Linux hosting
+    serverFarmId: appServicePlanId
+    reserved: true
     httpsOnly: true
     siteConfig: {
       linuxFxVersion: 'Node|20'
