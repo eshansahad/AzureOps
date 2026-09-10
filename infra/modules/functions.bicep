@@ -27,12 +27,11 @@ param dbAdminPassword string
 @description('Application Insights connection string (optional)')
 param appInsightsConnectionString string = ''
 
-@description('Resource ID of the existing App Service Plan to host this Function App on (shared with the web app to avoid Dynamic/Dedicated Linux plan conflicts in the same resource group)')
-param appServicePlanId string
-
 var storageAccountName = 'stazureops${environment}'
 var functionAppName = 'func-azureops-${environment}'
+var hostingPlanName = 'asp-functions-${environment}'
 
+// Storage Account required for Azure Functions runtime state & triggers
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: storageAccountName
   location: location
@@ -50,6 +49,24 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
 }
 
+// Serverless Consumption Plan (Y1) required for Linux Function Apps
+resource hostingPlan 'Microsoft.Web/serverFarms@2023-12-01' = {
+  name: hostingPlanName
+  location: location
+  tags: {
+    Project: 'AzureOps'
+    Environment: environment
+  }
+  sku: {
+    name: 'Y1'
+    tier: 'Dynamic'
+  }
+  properties: {
+    reserved: true // Mandatory for Linux hosting
+  }
+}
+
+// Linux Function App
 resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   name: functionAppName
   location: location
@@ -62,7 +79,8 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
     type: 'SystemAssigned'
   }
   properties: {
-    serverFarmId: appServicePlanId
+    serverFarmId: hostingPlan.id
+    reserved: true // Mandatory for Linux hosting
     httpsOnly: true
     siteConfig: {
       linuxFxVersion: 'Node|20'

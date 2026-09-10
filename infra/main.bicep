@@ -92,13 +92,11 @@ module functions 'modules/functions.bicep' = {
   scope: rg
   params: {
     environment: environment
-    location: functionsLocation
+    location: functionsLocation // Make sure this points to centralus
     dbServerFqdn: sql.outputs.sqlServerFqdn
     dbDatabaseName: sql.outputs.sqlDatabaseName
     dbAdminLogin: sqlAdminLogin
     dbAdminPassword: sqlAdminPassword
-    appInsightsConnectionString: appInsightsConnectionString
-    appServicePlanId: appService.outputs.appServicePlanId
   }
 }
 
