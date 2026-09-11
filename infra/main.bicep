@@ -100,10 +100,6 @@ module keyVault 'modules/keyvault.bicep' = {
   params: {
     environment: environment
     location: location
-    secretsReaderPrincipalIds: [
-      appService.outputs.appServicePrincipalId
-      functions.outputs.functionAppPrincipalId
-    ]
   }
 }
 
