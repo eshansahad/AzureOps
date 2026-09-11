@@ -1,7 +1,8 @@
 // =====================================================================
 // AzureOps — Azure Functions Module
-// Deploys a Storage Account and hosts the Linux Function App
-// on the existing B1 App Service Plan.
+// Deploys a Storage Account (required Functions dependency) and a
+// Consumption-plan Linux Function App running Node.js, used for
+// event-driven automation and incident remediation workflows.
 // =====================================================================
 
 @description('Environment name (dev, test, stage, prod)')
@@ -9,9 +10,6 @@ param environment string
 
 @description('Azure region for Functions resources')
 param location string
-
-@description('Existing App Service Plan ID to host the Function App')
-param appServicePlanId string
 
 @description('SQL Server fully qualified domain name (function writes incidents here)')
 param dbServerFqdn string
@@ -22,17 +20,18 @@ param dbDatabaseName string
 @description('SQL admin login')
 param dbAdminLogin string
 
-@secure()
-@description('SQL admin password')
-param dbAdminPassword string
+@description('Key Vault name holding the SQL admin password secret')
+param keyVaultName string
 
 @description('Application Insights connection string (optional)')
 param appInsightsConnectionString string = ''
 
+@description('Resource ID of the existing App Service Plan to host this Function App on (shared with the web app to avoid Dynamic/Dedicated Linux plan conflicts in the same resource group)')
+param appServicePlanId string
+
 var storageAccountName = 'stazureops${environment}'
 var functionAppName = 'func-azureops-${environment}'
 
-// Storage Account required for Azure Functions runtime state & triggers
 resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   name: storageAccountName
   location: location
@@ -50,7 +49,6 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2023-05-01' = {
   }
 }
 
-// Linux Function App attached to the shared B1 App Service Plan
 resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   name: functionAppName
   location: location
@@ -64,11 +62,9 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   }
   properties: {
     serverFarmId: appServicePlanId
-    reserved: true
     httpsOnly: true
     siteConfig: {
       linuxFxVersion: 'Node|20'
-      alwaysOn: true
       appSettings: [
         {
           name: 'AzureWebJobsStorage'
@@ -100,7 +96,7 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         }
         {
           name: 'DB_PASSWORD'
-          value: dbAdminPassword
+          value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}${environment().suffixes.keyvaultDns}/secrets/sql-admin-password/)'
         }
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
@@ -108,9 +104,11 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         }
       ]
     }
+    keyVaultReferenceIdentity: 'SystemAssigned'
   }
 }
 
 output functionAppName string = functionApp.name
 output functionAppDefaultHostname string = functionApp.properties.defaultHostName
+output functionAppPrincipalId string = functionApp.identity.principalId
 output storageAccountName string = storageAccount.name

@@ -21,8 +21,11 @@ param location string = 'eastus'
 @description('Azure region for SQL resources (may differ due to subscription quota restrictions)')
 param sqlLocation string = 'westus'
 
-@description('Azure region for App Service & Functions')
+@description('Azure region for App Service (may differ due to subscription quota restrictions)')
 param appServiceLocation string = 'centralus'
+
+@description('Azure region for Azure Functions resources (may differ due to subscription quota restrictions)')
+param functionsLocation string = 'centralus'
 
 @description('SQL Server administrator login')
 param sqlAdminLogin string = 'eshan'
@@ -39,6 +42,7 @@ param appInsightsConnectionString string = ''
 
 var namePrefix = 'azureops'
 var resourceGroupName = 'rg-${namePrefix}-${environment}'
+var keyVaultName = 'kv-${namePrefix}-${environment}'
 
 resource rg 'Microsoft.Resources/resourceGroups@2024-03-01' = {
   name: resourceGroupName
@@ -46,15 +50,6 @@ resource rg 'Microsoft.Resources/resourceGroups@2024-03-01' = {
   tags: {
     Project: 'AzureOps'
     Environment: environment
-  }
-}
-
-module keyVault 'modules/keyvault.bicep' = {
-  name: 'deploy-keyvault'
-  scope: rg
-  params: {
-    environment: environment
-    location: location
   }
 }
 
@@ -79,7 +74,7 @@ module appService 'modules/appservice.bicep' = {
     dbServerFqdn: sql.outputs.sqlServerFqdn
     dbDatabaseName: sql.outputs.sqlDatabaseName
     dbAdminLogin: sqlAdminLogin
-    dbAdminPassword: sqlAdminPassword
+    keyVaultName: keyVaultName
     appInsightsConnectionString: appInsightsConnectionString
   }
 }
@@ -89,12 +84,26 @@ module functions 'modules/functions.bicep' = {
   scope: rg
   params: {
     environment: environment
-    location: appServiceLocation
-    appServicePlanId: appService.outputs.appServicePlanId
+    location: functionsLocation
     dbServerFqdn: sql.outputs.sqlServerFqdn
     dbDatabaseName: sql.outputs.sqlDatabaseName
     dbAdminLogin: sqlAdminLogin
-    dbAdminPassword: sqlAdminPassword
+    keyVaultName: keyVaultName
+    appInsightsConnectionString: appInsightsConnectionString
+    appServicePlanId: appService.outputs.appServicePlanId
+  }
+}
+
+module keyVault 'modules/keyvault.bicep' = {
+  name: 'deploy-keyvault'
+  scope: rg
+  params: {
+    environment: environment
+    location: location
+    secretsReaderPrincipalIds: [
+      appService.outputs.appServicePrincipalId
+      functions.outputs.functionAppPrincipalId
+    ]
   }
 }
 

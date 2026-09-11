@@ -1,8 +1,9 @@
 // =====================================================================
 // AzureOps — App Service Module
 // Deploys a Linux App Service Plan (Basic B1 tier) + Web App running
-// Node.js, with a system-assigned managed identity.
-// B1 allows hosting both the Web App and Function App on the same plan.
+// Node.js, with a system-assigned managed identity used to read
+// secrets from Key Vault via Key Vault references (no plaintext
+// secrets in app settings or source control).
 // =====================================================================
 
 @description('Environment name (dev, test, stage, prod)')
@@ -23,9 +24,8 @@ param dbDatabaseName string
 @description('SQL admin login (used by the app to connect)')
 param dbAdminLogin string
 
-@secure()
-@description('SQL admin password (used by the app to connect)')
-param dbAdminPassword string
+@description('Key Vault name holding the SQL admin password secret')
+param keyVaultName string
 
 @description('Application Insights connection string (optional; set manually after first Application Insights setup)')
 param appInsightsConnectionString string = ''
@@ -43,9 +43,6 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2023-12-01' = {
   sku: {
     name: 'B1'
     tier: 'Basic'
-    size: 'B1'
-    family: 'B'
-    capacity: 1
   }
   properties: {
     reserved: true // required for Linux
@@ -68,7 +65,7 @@ resource appService 'Microsoft.Web/sites@2023-12-01' = {
     siteConfig: {
       linuxFxVersion: 'NODE|${nodeVersion}'
       appCommandLine: 'npm start'
-      alwaysOn: true // Allowed on B1 tier
+      alwaysOn: true // supported on B1 and above; keeps the app warm and satisfies Functions co-hosting
       appSettings: [
         {
           name: 'DB_SERVER'
@@ -84,7 +81,7 @@ resource appService 'Microsoft.Web/sites@2023-12-01' = {
         }
         {
           name: 'DB_PASSWORD'
-          value: dbAdminPassword
+          value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}${environment().suffixes.keyvaultDns}/secrets/sql-admin-password/)'
         }
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
@@ -92,6 +89,7 @@ resource appService 'Microsoft.Web/sites@2023-12-01' = {
         }
       ]
     }
+    keyVaultReferenceIdentity: 'SystemAssigned'
   }
 }
 
