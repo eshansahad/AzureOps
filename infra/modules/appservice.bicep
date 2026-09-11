@@ -81,7 +81,7 @@ resource appService 'Microsoft.Web/sites@2023-12-01' = {
         }
         {
           name: 'DB_PASSWORD'
-          value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/sql-admin-password/)'
+          value: '@Microsoft.KeyVault(SecretUri=https://kv-azureops-dev.vault.azure.net/secrets/sql-admin-password/fde491f8a93b4e5c96cd14d1e858e793)'
         }
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
