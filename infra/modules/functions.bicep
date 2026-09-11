@@ -1,8 +1,7 @@
 // =====================================================================
 // AzureOps — Azure Functions Module
-// Deploys a Storage Account (required Functions dependency) and a
-// Consumption-plan Linux Function App running Node.js, used for
-// event-driven automation and incident remediation workflows.
+// Deploys a Storage Account and hosts the Linux Function App on
+// the shared App Service Plan, reading secrets via Key Vault reference.
 // =====================================================================
 
 @description('Environment name (dev, test, stage, prod)')
@@ -26,7 +25,7 @@ param keyVaultName string
 @description('Application Insights connection string (optional)')
 param appInsightsConnectionString string = ''
 
-@description('Resource ID of the existing App Service Plan to host this Function App on (shared with the web app to avoid Dynamic/Dedicated Linux plan conflicts in the same resource group)')
+@description('Resource ID of the existing App Service Plan')
 param appServicePlanId string
 
 var storageAccountName = 'stazureops${environment}'
@@ -63,8 +62,10 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
   properties: {
     serverFarmId: appServicePlanId
     httpsOnly: true
+    keyVaultReferenceIdentity: 'SystemAssigned'
     siteConfig: {
       linuxFxVersion: 'Node|20'
+      alwaysOn: true
       appSettings: [
         {
           name: 'AzureWebJobsStorage'
@@ -96,7 +97,7 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         }
         {
           name: 'DB_PASSWORD'
-          value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}${environment().suffixes.keyvaultDns}/secrets/sql-admin-password/)'
+          value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/sql-admin-password/)'
         }
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
@@ -104,7 +105,6 @@ resource functionApp 'Microsoft.Web/sites@2023-12-01' = {
         }
       ]
     }
-    keyVaultReferenceIdentity: 'SystemAssigned'
   }
 }
 
