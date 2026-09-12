@@ -103,9 +103,21 @@ module keyVault 'modules/keyvault.bicep' = {
   }
 }
 
+module alerts 'modules/alerts.bicep' = {
+  name: 'deploy-alerts'
+  scope: rg
+  params: {
+    functionAppName: functions.outputs.functionAppName
+    appServicePlanName: 'asp-azureops-${environment}'
+    cpuThreshold: 80
+  }
+}
+
 output resourceGroupName string = rg.name
 output keyVaultName string = keyVault.outputs.keyVaultName
 output sqlServerFqdn string = sql.outputs.sqlServerFqdn
 output sqlDatabaseName string = sql.outputs.sqlDatabaseName
 output appServiceHostname string = appService.outputs.appServiceDefaultHostname
 output functionAppHostname string = functions.outputs.functionAppDefaultHostname
+output actionGroupId string = alerts.outputs.actionGroupId
+output alertRuleId string = alerts.outputs.alertRuleId
