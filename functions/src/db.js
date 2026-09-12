@@ -1,24 +1,27 @@
-// ============================================================================
-// AzureOps Functions - SQL Database helper with Auto-Recovery
-// ============================================================================
-
 const sql = require('mssql');
 
 const config = {
-  server: process.env.DB_SERVER,
-  database: process.env.DB_DATABASE,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
+  server: (process.env.DB_SERVER || '').trim(),
+  database: (process.env.DB_DATABASE || '').trim(),
+  user: (process.env.DB_USER || '').trim(),
+  password: (process.env.DB_PASSWORD || '').trim(),
+  port: 1433,
+  connectionTimeout: 30000,
+  requestTimeout: 30000,
   options: {
     encrypt: true,
     trustServerCertificate: false,
+    enableArithAbort: true,
     connectTimeout: 30000,
-    requestTimeout: 30000
+    cryptoCredentialsDetails: {
+      minVersion: 'TLSv1.2'
+    }
   },
   pool: {
     max: 5,
     min: 0,
-    idleTimeoutMillis: 10000
+    idleTimeoutMillis: 5000,
+    acquireTimeoutMillis: 30000
   }
 };
 
@@ -29,10 +32,9 @@ async function getPool() {
     throw new Error('Database environment variables are not configured.');
   }
 
-  // If pool exists, verify it is still healthy
   if (pool) {
     try {
-      await pool.request().query('SELECT 1 AS health');
+      await pool.request().query('SELECT 1 AS ping');
       return pool;
     } catch (err) {
       try {
@@ -42,9 +44,9 @@ async function getPool() {
     }
   }
 
-  // Create fresh pool if missing or after dropped socket
   pool = await new sql.ConnectionPool(config).connect();
   pool.on('error', (err) => {
+    console.error('SQL Pool background error:', err.message);
     pool = null;
   });
 
