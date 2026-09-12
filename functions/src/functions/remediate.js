@@ -1,14 +1,6 @@
-// =====================================================================
-// AzureOps Functions — remediate
-//
-// Simulates the architecture's "detect an incident -> trigger automated
-// remediation -> record the outcome" flow. In a full implementation
-// this would be triggered by an Azure Monitor alert or Event Grid
-// event; here it's exposed as an HTTP endpoint so it can be triggered
-// and demonstrated directly.
-//
-// POST body: { "environmentId": 1, "description": "...", "severity": "Medium" }
-// =====================================================================
+// ============================================================================
+// AzureOps Functions - Automated Remediation Handler
+// ============================================================================
 
 const { app } = require('@azure/functions');
 const { getPool, sql } = require('../db');
@@ -18,18 +10,22 @@ app.http('remediate', {
   authLevel: 'function',
   route: 'remediate',
   handler: async (request, context) => {
-    let body;
+    let body = {};
     try {
       body = await request.json();
     } catch {
-      return { status: 400, jsonBody: { error: 'Request body must be valid JSON.' } };
+      body = {};
     }
 
-    const { environmentId = null, description, severity = 'Medium' } = body || {};
-
-    if (!description) {
-      return { status: 400, jsonBody: { error: '"description" is required.' } };
-    }
+    // Support both manual API calls and Azure Monitor Common Alert payloads
+    const isAlert = body?.data?.essentials != null;
+    const description = isAlert
+      ? `Azure Monitor Alert: ${body.data.essentials.alertRule || 'High CPU Threshold breached'}`
+      : (body.description || 'Automated restart executed after metric threshold breach.');
+    const severity = isAlert
+      ? (body.data.essentials.severity || 'Warning')
+      : (body.severity || 'Medium');
+    const environmentId = body.environmentId || null;
 
     const actionTaken = `Automated remediation executed by AzureOps Function at ${new Date().toISOString()}.`;
 
@@ -51,6 +47,7 @@ app.http('remediate', {
 
       return {
         status: 200,
+        headers: { 'Content-Type': 'application/json' },
         jsonBody: {
           message: 'Incident detected and automatically remediated.',
           incident: result.recordset[0]
@@ -60,6 +57,7 @@ app.http('remediate', {
       context.error('Remediation function failed:', err.message);
       return {
         status: 500,
+        headers: { 'Content-Type': 'application/json' },
         jsonBody: { error: 'Remediation failed', detail: err.message }
       };
     }

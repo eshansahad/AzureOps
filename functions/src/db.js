@@ -1,8 +1,6 @@
-// =====================================================================
-// AzureOps Functions — SQL Database helper
-// Same pattern as app/db.js: connection details come from App Settings,
-// which originate from Key Vault via the Bicep parameters file.
-// =====================================================================
+// ============================================================================
+// AzureOps Functions - SQL Database helper with Auto-Recovery
+// ============================================================================
 
 const sql = require('mssql');
 
@@ -13,25 +11,44 @@ const config = {
   password: process.env.DB_PASSWORD,
   options: {
     encrypt: true,
-    trustServerCertificate: false
+    trustServerCertificate: false,
+    connectTimeout: 30000,
+    requestTimeout: 30000
   },
   pool: {
     max: 5,
     min: 0,
-    idleTimeoutMillis: 30000
+    idleTimeoutMillis: 10000
   }
 };
 
-let poolPromise;
+let pool = null;
 
-function getPool() {
+async function getPool() {
   if (!config.server || !config.database) {
-    return Promise.reject(new Error('Database environment variables are not configured.'));
+    throw new Error('Database environment variables are not configured.');
   }
-  if (!poolPromise) {
-    poolPromise = new sql.ConnectionPool(config).connect();
+
+  // If pool exists, verify it is still healthy
+  if (pool) {
+    try {
+      await pool.request().query('SELECT 1 AS health');
+      return pool;
+    } catch (err) {
+      try {
+        await pool.close();
+      } catch (_) {}
+      pool = null;
+    }
   }
-  return poolPromise;
+
+  // Create fresh pool if missing or after dropped socket
+  pool = await new sql.ConnectionPool(config).connect();
+  pool.on('error', (err) => {
+    pool = null;
+  });
+
+  return pool;
 }
 
 module.exports = { sql, getPool };
