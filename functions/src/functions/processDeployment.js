@@ -5,7 +5,7 @@ app.serviceBusQueue('processDeployment', {
     connection: 'ServiceBusConnection',
     queueName: 'deployment-requests',
     handler: async (message, context) => {
-        context.log('Raw incoming message:', message);
+        context.log('Incoming raw message:', JSON.stringify(message));
 
         let data = message;
         if (typeof message === 'string') {
@@ -20,12 +20,12 @@ app.serviceBusQueue('processDeployment', {
         const requestedBy = String(data?.requestedBy || 'eshan');
         const appName = String(data?.appName || 'AzureOps Portal');
 
-        context.log(`Processing deployment for env: ${environmentId}, user: ${requestedBy}`);
+        context.log(`Persisting deployment for EnvironmentId: ${environmentId}, RequestedBy: ${requestedBy}`);
 
         try {
             const pool = await getPool();
             const request = pool.request();
-            
+
             request.input('EnvironmentId', sql.Int, environmentId);
             request.input('AppName', sql.NVarChar(100), appName);
             request.input('Status', sql.NVarChar(50), 'Completed');
@@ -36,9 +36,9 @@ app.serviceBusQueue('processDeployment', {
                 VALUES (@EnvironmentId, @AppName, @Status, @RequestedBy, SYSUTCDATETIME(), SYSUTCDATETIME())
             `);
 
-            context.log(`Successfully recorded deployment for environment ${environmentId}`);
+            context.log(`Deployment recorded successfully for environment ${environmentId}`);
         } catch (err) {
-            context.error('SQL Execution Error:', err.message);
+            context.error('Database write error:', err.message);
             throw err;
         }
     }
