@@ -1,9 +1,3 @@
-// functions/src/functions/processDeployment.js
-// Service Bus triggered function: consumes deployment-request messages
-// enqueued by the portal and writes the corresponding Deployments record.
-// Decouples the portal's write path from the database write via async
-// reliable messaging (Service Bus queue: deployment-requests).
-
 const { app } = require('@azure/functions');
 const { getPool, sql } = require('../db');
 
@@ -11,30 +5,40 @@ app.serviceBusQueue('processDeployment', {
     connection: 'ServiceBusConnection',
     queueName: 'deployment-requests',
     handler: async (message, context) => {
-        context.log('Received deployment request:', JSON.stringify(message));
+        context.log('Raw incoming message:', message);
 
-        const { environmentId, requestedBy, appName, description } = message || {};
-
-        if (!environmentId || !requestedBy) {
-            context.error('Invalid deployment message: missing environmentId or requestedBy');
-            return;
+        let data = message;
+        if (typeof message === 'string') {
+            try {
+                data = JSON.parse(message);
+            } catch {
+                data = { description: message };
+            }
         }
+
+        const environmentId = Number(data?.environmentId) || 1;
+        const requestedBy = String(data?.requestedBy || 'eshan');
+        const appName = String(data?.appName || 'AzureOps Portal');
+
+        context.log(`Processing deployment for env: ${environmentId}, user: ${requestedBy}`);
 
         try {
             const pool = await getPool();
-            await pool.request()
-                .input('EnvironmentId', sql.Int, environmentId)
-                .input('AppName', sql.NVarChar(100), appName || 'AzureOps Portal')
-                .input('RequestedBy', sql.NVarChar(100), requestedBy)
-                .input('Status', sql.NVarChar(50), 'Completed')
-                .query(`
-                    INSERT INTO Deployments (EnvironmentId, AppName, RequestedBy, Status, StartedAt, CompletedAt)
-                    VALUES (@EnvironmentId, @AppName, @RequestedBy, @Status, SYSUTCDATETIME(), SYSUTCDATETIME())
-                `);
+            const request = pool.request();
+            
+            request.input('EnvironmentId', sql.Int, environmentId);
+            request.input('AppName', sql.NVarChar(100), appName);
+            request.input('Status', sql.NVarChar(50), 'Completed');
+            request.input('RequestedBy', sql.NVarChar(100), requestedBy);
 
-            context.log(`Deployment recorded for environment ${environmentId}`);
+            await request.query(`
+                INSERT INTO Deployments (EnvironmentId, AppName, Status, RequestedBy, StartedAt, CompletedAt)
+                VALUES (@EnvironmentId, @AppName, @Status, @RequestedBy, SYSUTCDATETIME(), SYSUTCDATETIME())
+            `);
+
+            context.log(`Successfully recorded deployment for environment ${environmentId}`);
         } catch (err) {
-            context.error('Failed to record deployment from Service Bus message:', err.message);
+            context.error('SQL Execution Error:', err.message);
             throw err;
         }
     }
