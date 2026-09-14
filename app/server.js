@@ -1,12 +1,7 @@
 // =====================================================================
 // AzureOps Portal — Minimal Express server
-// Serves a placeholder dashboard + health check endpoint.
-// Will be extended with API routes (environments, deployments,
-// incidents) and Entra ID authentication in later phases.
 // =====================================================================
 
-// Application Insights MUST be initialized before any other imports
-// so it can auto-instrument HTTP requests, dependencies, and errors.
 const appInsights = require('applicationinsights');
 if (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING) {
   appInsights
@@ -26,7 +21,13 @@ const { getPool } = require('./db');
 const app = express();
 const port = process.env.PORT || 8080;
 
+// Body parser for JSON payloads (required for POST /api/deployments)
+app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Mount routes
+const deploymentsRouter = require('./routes/deployments');
+app.use(deploymentsRouter);
 
 app.get('/health', (req, res) => {
   res.status(200).json({
@@ -44,12 +45,12 @@ app.get('/api/status', (req, res) => {
       'Microsoft Entra ID',
       'Azure Key Vault',
       'Azure SQL Database',
-      'Azure App Service'
+      'Azure App Service',
+      'Azure Service Bus'
     ]
   });
 });
 
-// Live database-backed routes
 app.get('/api/users', async (req, res) => {
   try {
     const pool = await getPool();

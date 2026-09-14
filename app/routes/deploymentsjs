@@ -1,0 +1,42 @@
+// app/routes/deployments.js
+// POST /api/deployments — enqueues a deployment request to Service Bus
+// instead of writing to SQL directly, demonstrating reliable async
+// messaging between the portal and the processing Function.
+
+const express = require('express');
+const { ServiceBusClient } = require('@azure/service-bus');
+const { DefaultAzureCredential } = require('@azure/identity');
+
+const router = express.Router();
+
+const SB_NAMESPACE = process.env.SERVICE_BUS_NAMESPACE; // e.g. sb-azureops-dev.servicebus.windows.net
+const QUEUE_NAME = 'deployment-requests';
+
+// Managed identity auth — no connection string / shared access key required
+const sbClient = new ServiceBusClient(SB_NAMESPACE, new DefaultAzureCredential());
+const sender = sbClient.createSender(QUEUE_NAME);
+
+router.post('/api/deployments', async (req, res) => {
+    const { environmentId, requestedBy, description } = req.body;
+
+    if (!environmentId || !requestedBy) {
+        return res.status(400).json({ error: 'environmentId and requestedBy are required' });
+    }
+
+    try {
+        await sender.sendMessages({
+            body: { environmentId, requestedBy, description },
+            contentType: 'application/json'
+        });
+
+        // 202 Accepted: the request is queued, not yet persisted — reflects
+        // the async nature of the workflow honestly rather than implying
+        // the write has already completed.
+        res.status(202).json({ status: 'queued', environmentId, requestedBy });
+    } catch (err) {
+        console.error('Failed to enqueue deployment request:', err);
+        res.status(500).json({ error: 'Failed to queue deployment request' });
+    }
+});
+
+module.exports = router;

@@ -113,6 +113,17 @@ module alerts 'modules/alerts.bicep' = {
   }
 }
 
+module servicebus 'modules/servicebus.bicep' = {
+  name: 'deploy-servicebus'
+  scope: rg
+  params: {
+    location: location
+    appServiceName: appService.outputs.appServiceName
+    functionAppName: functions.outputs.functionAppName
+    queueName: 'deployment-requests'
+  }
+}
+
 output resourceGroupName string = rg.name
 output keyVaultName string = keyVault.outputs.keyVaultName
 output sqlServerFqdn string = sql.outputs.sqlServerFqdn
@@ -121,3 +132,4 @@ output appServiceHostname string = appService.outputs.appServiceDefaultHostname
 output functionAppHostname string = functions.outputs.functionAppDefaultHostname
 output actionGroupId string = alerts.outputs.actionGroupId
 output alertRuleId string = alerts.outputs.alertRuleId
+output serviceBusNamespaceFqdn string = servicebus.outputs.serviceBusNamespaceFqdn
