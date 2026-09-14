@@ -13,7 +13,7 @@ app.serviceBusQueue('processDeployment', {
     handler: async (message, context) => {
         context.log('Received deployment request:', JSON.stringify(message));
 
-        const { environmentId, requestedBy, description } = message || {};
+        const { environmentId, requestedBy, appName, description } = message || {};
 
         if (!environmentId || !requestedBy) {
             context.error('Invalid deployment message: missing environmentId or requestedBy');
@@ -24,18 +24,18 @@ app.serviceBusQueue('processDeployment', {
             const pool = await getPool();
             await pool.request()
                 .input('EnvironmentId', sql.Int, environmentId)
+                .input('AppName', sql.NVarChar(100), appName || 'AzureOps Portal')
                 .input('RequestedBy', sql.NVarChar(100), requestedBy)
-                .input('Description', sql.NVarChar(500), description || 'Deployment triggered via portal')
                 .input('Status', sql.NVarChar(50), 'Completed')
                 .query(`
-                    INSERT INTO Deployments (EnvironmentId, RequestedBy, Description, Status, DeployedAt)
-                    VALUES (@EnvironmentId, @RequestedBy, @Description, @Status, SYSUTCDATETIME())
+                    INSERT INTO Deployments (EnvironmentId, AppName, RequestedBy, Status, StartedAt, CompletedAt)
+                    VALUES (@EnvironmentId, @AppName, @RequestedBy, @Status, SYSUTCDATETIME(), SYSUTCDATETIME())
                 `);
 
             context.log(`Deployment recorded for environment ${environmentId}`);
         } catch (err) {
             context.error('Failed to record deployment from Service Bus message:', err.message);
-            throw err; // Rethrowing lets Service Bus retry up to maxDeliveryCount before dead-lettering
+            throw err;
         }
     }
 });
