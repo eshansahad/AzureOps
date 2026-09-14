@@ -8,12 +8,6 @@
 @description('Location for the Service Bus namespace')
 param location string = 'centralus'
 
-@description('Name of the existing App Service (sender identity)')
-param appServiceName string = 'app-azureops-dev'
-
-@description('Name of the existing Function App (receiver identity)')
-param functionAppName string = 'func-azureops-dev'
-
 @description('Name of the deployment-requests queue')
 param queueName string = 'deployment-requests'
 

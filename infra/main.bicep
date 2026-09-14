@@ -118,8 +118,6 @@ module servicebus 'modules/servicebus.bicep' = {
   scope: rg
   params: {
     location: location
-    appServiceName: appService.outputs.appServiceName
-    functionAppName: functions.outputs.functionAppName
     queueName: 'deployment-requests'
   }
 }
