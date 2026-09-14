@@ -53,4 +53,7 @@ async function getPool() {
   return pool;
 }
 
-module.exports = { sql, getPool };
+module.exports = {
+  getPool,
+  sql
+};
