@@ -138,6 +138,15 @@ module loganalytics 'modules/loganalytics.bicep' = {
   }
 }
 
+module apim 'modules/apim.bicep' = {
+  name: 'deploy-apim'
+  scope: rg
+  params: {
+    location: location
+    environment: environment
+  }
+}
+
 output resourceGroupName string = rg.name
 output keyVaultName string = keyVault.outputs.keyVaultName
 output sqlServerFqdn string = sql.outputs.sqlServerFqdn
@@ -148,3 +157,4 @@ output actionGroupId string = alerts.outputs.actionGroupId
 output alertRuleId string = alerts.outputs.alertRuleId
 output serviceBusNamespaceFqdn string = servicebus.outputs.serviceBusNamespaceFqdn
 output logAnalyticsWorkspaceId string = loganalytics.outputs.workspaceId
+output apimGatewayUrl string = apim.outputs.apimGatewayUrl
