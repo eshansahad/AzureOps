@@ -127,7 +127,6 @@ module eventgrid 'modules/eventgrid.bicep' = {
   scope: rg
   params: {
     location: location
-    functionAppName: functions.outputs.functionAppName
   }
 }
 
