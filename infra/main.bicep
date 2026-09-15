@@ -122,6 +122,15 @@ module servicebus 'modules/servicebus.bicep' = {
   }
 }
 
+module eventgrid 'modules/eventgrid.bicep' = {
+  name: 'deploy-eventgrid'
+  scope: rg
+  params: {
+    location: location
+    functionAppName: functions.outputs.functionAppName
+  }
+}
+
 output resourceGroupName string = rg.name
 output keyVaultName string = keyVault.outputs.keyVaultName
 output sqlServerFqdn string = sql.outputs.sqlServerFqdn

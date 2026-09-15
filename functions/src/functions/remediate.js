@@ -4,6 +4,7 @@
 
 const { app } = require('@azure/functions');
 const { getPool, sql } = require('../db');
+const { publishEvent } = require('../eventPublisher');
 
 app.http('remediate', {
   methods: ['POST'],
@@ -42,6 +43,9 @@ app.http('remediate', {
           OUTPUT INSERTED.IncidentId, INSERTED.Description, INSERTED.Severity, INSERTED.Status, INSERTED.ActionTaken, INSERTED.DetectedAt, INSERTED.ResolvedAt
           VALUES (@environmentId, @description, @severity, 'Resolved', @actionTaken, SYSUTCDATETIME(), SYSUTCDATETIME())
         `);
+
+      const incidentId = result.recordset[0].IncidentId;
+      await publishEvent('AzureOps.Incident.Resolved', `incidents/${incidentId}`, { severity, description });
 
       context.log(`Incident recorded and auto-resolved: ${JSON.stringify(result.recordset[0])}`);
 

@@ -1,5 +1,6 @@
 const { app } = require('@azure/functions');
 const { getPool, sql } = require('../db');
+const { publishEvent } = require('../eventPublisher');
 
 app.serviceBusQueue('processDeployment', {
     connection: 'ServiceBusConnection',
@@ -33,6 +34,8 @@ app.serviceBusQueue('processDeployment', {
                     INSERT INTO dbo.Deployments (EnvironmentId, AppName, Status, RequestedBy, StartedAt, CompletedAt)
                     VALUES (@EnvironmentId, @AppName, @Status, @RequestedBy, SYSUTCDATETIME(), SYSUTCDATETIME())
                 `);
+
+            await publishEvent('AzureOps.Deployment.Completed', `deployments/${environmentId}`, { environmentId, appName, requestedBy });
 
             context.log(`Successfully recorded deployment for environment ${environmentId}`);
         } catch (err) {
