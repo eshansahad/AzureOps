@@ -130,6 +130,14 @@ module eventgrid 'modules/eventgrid.bicep' = {
   }
 }
 
+module loganalytics 'modules/loganalytics.bicep' = {
+  name: 'deploy-loganalytics'
+  scope: rg
+  params: {
+    location: location
+  }
+}
+
 output resourceGroupName string = rg.name
 output keyVaultName string = keyVault.outputs.keyVaultName
 output sqlServerFqdn string = sql.outputs.sqlServerFqdn
@@ -139,3 +147,4 @@ output functionAppHostname string = functions.outputs.functionAppDefaultHostname
 output actionGroupId string = alerts.outputs.actionGroupId
 output alertRuleId string = alerts.outputs.alertRuleId
 output serviceBusNamespaceFqdn string = servicebus.outputs.serviceBusNamespaceFqdn
+output logAnalyticsWorkspaceId string = loganalytics.outputs.workspaceId
