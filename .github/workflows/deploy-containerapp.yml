@@ -44,8 +44,12 @@ jobs:
             --server acrazureopsdev.azurecr.io \
             --identity system
 
+          az containerapp ingress update \
+            --name ca-azureops-dev \
+            --resource-group rg-azureops-dev \
+            --target-port 8080
+
           az containerapp update \
             --name ca-azureops-dev \
             --resource-group rg-azureops-dev \
-            --image acrazureopsdev.azurecr.io/azureops-portal:${{ github.sha }} \
-            --target-port 8080
+            --image acrazureopsdev.azurecr.io/azureops-portal:${{ github.sha }}
