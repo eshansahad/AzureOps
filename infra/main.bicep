@@ -147,6 +147,26 @@ module apim 'modules/apim.bicep' = {
   }
 }
 
+// --- Storage Reports Module ---
+module storagereports 'modules/storagereports.bicep' = {
+  name: 'deploy-storagereports'
+  scope: rg
+  params: {
+    storageAccountName: 'stazureopsdev'
+    functionAppName: functions.outputs.functionAppName
+  }
+}
+
+// --- Container Apps & ACR Module ---
+module containerapps 'modules/containerapps.bicep' = {
+  name: 'deploy-containerapps'
+  scope: rg
+  params: {
+    location: appServiceLocation // centralus
+    logAnalyticsWorkspaceName: 'law-azureops-dev'
+  }
+}
+
 output resourceGroupName string = rg.name
 output keyVaultName string = keyVault.outputs.keyVaultName
 output sqlServerFqdn string = sql.outputs.sqlServerFqdn
@@ -158,3 +178,6 @@ output alertRuleId string = alerts.outputs.alertRuleId
 output serviceBusNamespaceFqdn string = servicebus.outputs.serviceBusNamespaceFqdn
 output logAnalyticsWorkspaceId string = loganalytics.outputs.workspaceId
 output apimGatewayUrl string = apim.outputs.apimGatewayUrl
+output reportsBlobEndpoint string = storagereports.outputs.blobEndpoint
+output acrLoginServer string = containerapps.outputs.acrLoginServer
+output containerAppFqdn string = containerapps.outputs.containerAppFqdn
