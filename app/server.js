@@ -27,7 +27,12 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Mount routes
 const deploymentsRouter = require('./routes/deployments');
+const incidentsRouter = require('./routes/incidents');
+const remediateRouter = require('./routes/remediate');
+
 app.use(deploymentsRouter);
+app.use(incidentsRouter);
+app.use(remediateRouter);
 
 app.get('/health', (req, res) => {
   res.status(200).json({

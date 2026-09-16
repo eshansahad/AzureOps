@@ -4,216 +4,419 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>AzureOps Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #0b1220;
-    --panel: #121a2b;
-    --border: #223049;
-    --text: #e6ecf5;
-    --muted: #8ea0bd;
-    --accent: #3b82f6;
-    --accent-soft: rgba(59, 130, 246, 0.12);
-    --ok: #22c55e;
+    /* Professional IT/Cloud SaaS Theme */
+    --bg-main: #f8fafc;        /* Slate 50 - very light cool grey */
+    --bg-header: #0f172a;      /* Slate 900 - dark commanding header */
+    --bg-panel: #ffffff;       /* Pure white content cards */
+    
+    --text-main: #0f172a;      /* High contrast dark slate */
+    --text-muted: #64748b;     /* Slate 500 for secondary text */
+    --text-light: #f8fafc;     /* Light text on dark backgrounds */
+    
+    --border: #e2e8f0;         /* Slate 200 */
+    --border-dark: #1e293b;    /* Slate 800 */
+    
+    --accent: #2563eb;         /* Blue 600 - Standard cloud primary action */
+    --accent-hover: #1d4ed8;   /* Blue 700 */
+    --accent-light: #eff6ff;   /* Blue 50 */
+    
+    /* Semantic Colors */
+    --success: #10b981;
+    --success-bg: #ecfdf5;
+    --warning: #f59e0b;
+    --warning-bg: #fffbeb;
+    --danger: #ef4444;
+    --danger-bg: #fef2f2;
+    
+    /* Modern Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   }
+  
   * { box-sizing: border-box; }
+  
   body {
     margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, sans-serif;
-    background: radial-gradient(circle at 20% 0%, #101b30 0%, var(--bg) 55%);
-    color: var(--text);
+    font-family: 'Inter', -apple-system, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    line-height: 1.5;
     min-height: 100vh;
+    display: flex;
+    flex-direction: column;
   }
+
   header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 24px 40px;
-    border-bottom: 1px solid var(--border);
+    padding: 16px 40px;
+    background: var(--bg-header);
+    border-bottom: 1px solid var(--border-dark);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 100;
   }
+
   .brand {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-light);
+    letter-spacing: -0.025em;
     display: flex;
     align-items: center;
     gap: 12px;
-    font-weight: 600;
-    font-size: 18px;
-    letter-spacing: 0.2px;
   }
+
   .brand .mark {
     width: 32px;
     height: 32px;
-    border-radius: 8px;
-    background: linear-gradient(135deg, var(--accent), #8b5cf6);
+    border-radius: 6px;
+    background: var(--accent);
+    color: #ffffff;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 16px;
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
   }
-  .status-pill {
+
+  .role-selector {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .role-selector label {
+    font-size: 13px;
+    color: #94a3b8;
+    font-weight: 500;
+  }
+
+  header select {
+    background: #1e293b;
+    color: #f8fafc;
+    border: 1px solid #334155;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    transition: all 0.2s;
+  }
+  
+  header select option {
+    background: var(--bg-panel);
+    color: var(--text-main);
+  }
+
+  select, input[type="text"] {
+    background: var(--bg-panel);
+    color: var(--text-main);
+    border: 1px solid var(--border);
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    outline: none;
+    transition: all 0.2s;
+  }
+  
+  select:focus, input[type="text"]:focus, header select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  }
+
+  main {
+    max-width: 1100px;
+    margin: 40px auto;
+    width: 100%;
+    padding: 0 24px;
+    flex: 1;
+  }
+
+  .section {
+    display: none;
+    animation: fadeIn 0.2s ease-out;
+  }
+  
+  .section.active {
+    display: block;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 24px;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 12px;
+    letter-spacing: -0.01em;
+  }
+
+  .nav-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  .back-btn {
+    background: #ffffff;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
     display: flex;
     align-items: center;
     gap: 8px;
-    background: var(--accent-soft);
-    border: 1px solid rgba(59, 130, 246, 0.35);
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-size: 13px;
+    transition: all 0.2s;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .back-btn:hover {
+    background: var(--bg-main);
+    color: var(--text-main);
+    border-color: #cbd5e1;
+  }
+
+  /* Action Cards */
+  .action-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+
+  .action-card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: var(--shadow-sm);
+    display: none;
+  }
+
+  .action-card.visible {
+    display: block;
+  }
+
+  .action-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: #cbd5e1;
+  }
+
+  .action-card h3 {
+    margin: 0 0 8px;
+    font-size: 18px;
+    font-weight: 600;
     color: var(--accent);
   }
-  .status-pill .dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--ok);
-    box-shadow: 0 0 8px var(--ok);
+  
+  .action-card p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 14px;
   }
-  main {
-    max-width: 1040px;
-    margin: 0 auto;
-    padding: 56px 24px 80px;
-  }
-  .hero h1 {
-    font-size: 34px;
-    margin: 0 0 12px;
-    letter-spacing: -0.5px;
-  }
-  .hero p {
-    color: var(--muted);
-    font-size: 16px;
-    max-width: 620px;
-    line-height: 1.6;
-    margin: 0 0 40px;
-  }
+
+  /* Overview Grid */
   .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 16px;
     margin-bottom: 48px;
   }
+
   .card {
-    background: var(--panel);
+    background: var(--bg-panel);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 20px;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
   }
+
   .card .label {
-    color: var(--muted);
+    color: var(--text-muted);
     font-size: 12px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.05em;
     margin-bottom: 8px;
   }
+
   .card .value {
-    font-size: 15px;
-    font-weight: 600;
-  }
-  .card .value.ok { color: var(--ok); }
-  .services {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 28px;
-  }
-  .services h2 {
-    margin: 0 0 6px;
     font-size: 16px;
+    font-weight: 600;
+    color: var(--text-main);
   }
-  .services p {
-    color: var(--muted);
-    font-size: 13px;
-    margin: 0 0 20px;
-  }
-  .service-list {
+  
+  .card .value.ok { color: var(--success); }
+
+  /* Services List */
+  .services-list {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
     list-style: none;
-    margin: 0;
     padding: 0;
+    margin: 0 0 48px;
   }
-  .service-list li {
+
+  .services-list li {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 14px;
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 13px;
-    color: var(--text);
-    background: rgba(255,255,255,0.02);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 10px 12px;
+    box-shadow: var(--shadow-sm);
+    font-weight: 500;
   }
-  .service-list li::before {
+
+  .services-list li::before {
     content: "";
     width: 6px;
     height: 6px;
+    background: var(--accent);
     border-radius: 50%;
-    background: var(--ok);
-    flex-shrink: 0;
   }
-  .live-section {
-    margin-top: 24px;
-    background: var(--panel);
+
+  /* Tables */
+  .panel {
+    background: var(--bg-panel);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 28px;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
   }
-  .live-section h2 {
-    margin: 0 0 6px;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .live-badge {
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    background: rgba(34, 197, 94, 0.15);
-    color: var(--ok);
-    border: 1px solid rgba(34, 197, 94, 0.4);
-    border-radius: 999px;
-    padding: 2px 8px;
-  }
-  .live-section p.sub {
-    color: var(--muted);
-    font-size: 13px;
-    margin: 0 0 20px;
-  }
-  table.users {
+
+  table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 13px;
+    font-size: 14px;
   }
-  table.users th {
+
+  th {
     text-align: left;
-    color: var(--muted);
+    color: var(--text-muted);
+    font-weight: 600;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
     text-transform: uppercase;
-    font-size: 11px;
-    letter-spacing: 0.5px;
-    padding: 8px 12px;
+    letter-spacing: 0.05em;
+  }
+
+  td {
+    padding: 16px;
     border-bottom: 1px solid var(--border);
   }
-  table.users td {
-    padding: 10px 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
-  }
-  table.users tr:last-child td { border-bottom: none; }
-  .role-tag {
-    font-size: 11px;
-    padding: 2px 8px;
-    border-radius: 6px;
-    background: var(--accent-soft);
-    color: var(--accent);
-  }
-  .fetch-error {
-    color: #f87171;
-    font-size: 13px;
-  }
-  footer {
-    text-align: center;
-    color: var(--muted);
+
+  tr:last-child td { border-bottom: none; }
+
+  .badge {
+    padding: 4px 10px;
+    border-radius: 9999px; /* Pill shape */
     font-size: 12px;
-    padding: 24px;
+    font-weight: 600;
+    display: inline-block;
+  }
+  .badge.success { background: var(--success-bg); color: var(--success); }
+  .badge.warning { background: var(--warning-bg); color: var(--warning); }
+  .badge.danger { background: var(--danger-bg); color: var(--danger); }
+  .badge.info { background: var(--accent-light); color: var(--accent); }
+
+  /* Forms and Buttons */
+  .form-group {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+  }
+
+  input[type="text"] {
+    flex: 1;
+  }
+
+  button.primary {
+    background: var(--accent);
+    color: white;
+    border: 1px solid transparent;
+    padding: 10px 20px;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: var(--shadow-sm);
+  }
+
+  button.primary:hover {
+    background: var(--accent-hover);
+  }
+
+  button.outline {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-main);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+  }
+
+  button.outline:hover {
+    background: var(--bg-main);
+    border-color: #cbd5e1;
+  }
+
+  .loading {
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 20px 0;
+    text-align: center;
+  }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--bg-header);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    transform: translateY(100px);
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: var(--shadow-lg);
+    z-index: 1000;
+  }
+  
+  .toast.show {
+    transform: translateY(0);
+    opacity: 1;
   }
 </style>
 </head>
@@ -221,92 +424,296 @@
   <header>
     <div class="brand">
       <div class="mark">A</div>
-      AzureOps Portal
+      AzureOps
     </div>
-    <div class="status-pill"><span class="dot"></span> Online</div>
+    <div class="role-selector">
+      <label>Role / Persona:</label>
+      <select id="roleSelect" onchange="handleRoleChange()">
+        <option value="CloudAdministrator" selected>Cloud Administrator</option>
+        <option value="DevOpsEngineer">DevOps Engineer</option>
+        <option value="Developer">Developer</option>
+      </select>
+    </div>
   </header>
 
   <main>
-    <div class="hero">
-      <h1>Enterprise Cloud Operations Platform</h1>
-      <p>
-        Centralized environment management, deployments, monitoring, and
-        incident response — built on Azure App Service, SQL Database,
-        Key Vault, and Microsoft Entra ID.
-      </p>
-    </div>
+    <!-- Overview Section (Main Index) -->
+    <div id="overview" class="section active">
+      
+      <div class="action-grid">
+        <div class="action-card visible" id="card-deployments" onclick="navigateTo('deployments')">
+          <h3>Request Deployment</h3>
+          <p>Deploy applications to specific environments</p>
+        </div>
+        <div class="action-card visible" id="card-incidents" onclick="navigateTo('incidents')">
+          <h3>Operational Incidents</h3>
+          <p>Monitor and remediate live incidents</p>
+        </div>
+      </div>
 
-    <div class="grid">
-      <div class="card">
-        <div class="label">Environment</div>
-        <div class="value">Development</div>
+      <h2>System Overview</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="label">Environment</div>
+          <div class="value">Development</div>
+        </div>
+        <div class="card">
+          <div class="label">Hosted On</div>
+          <div class="value">Azure App Service</div>
+        </div>
+        <div class="card">
+          <div class="label">Database</div>
+          <div class="value ok">Connected (SQL Serverless)</div>
+        </div>
+        <div class="card">
+          <div class="label">Build</div>
+          <div class="value">GitHub Actions</div>
+        </div>
       </div>
-      <div class="card">
-        <div class="label">Hosted On</div>
-        <div class="value">Azure App Service</div>
-      </div>
-      <div class="card">
-        <div class="label">Database</div>
-        <div class="value ok">Connected (SQL Serverless)</div>
-      </div>
-      <div class="card">
-        <div class="label">Build</div>
-        <div class="value">Deployed via GitHub Actions</div>
-      </div>
-    </div>
 
-    <div class="services">
-      <h2>Services integrated so far</h2>
-      <p>Provisioned via Bicep, secured with Key Vault + RBAC.</p>
-      <ul class="service-list">
+      <h2>Services Integrated</h2>
+      <ul class="services-list">
         <li>Microsoft Entra ID</li>
         <li>Azure Key Vault</li>
         <li>Azure SQL Database</li>
         <li>Azure App Service</li>
-        <li>GitHub Actions CI/CD</li>
+        <li>Azure Service Bus</li>
         <li>Azure Resource Manager / Bicep</li>
       </ul>
+
+      <h2>Registered Users</h2>
+      <div class="panel">
+        <div id="usersContainer" class="loading">Loading users...</div>
+      </div>
     </div>
-    <div class="live-section">
-      <h2>Registered users <span class="live-badge">Live from Azure SQL</span></h2>
-      <p class="sub">Fetched in real time via <code>/api/users</code> — proves the app, App Service, and SQL Database are actually connected end-to-end.</p>
-      <div id="users-container">Loading&hellip;</div>
+
+    <!-- Deployments Section -->
+    <div id="deployments" class="section">
+      <div class="nav-header">
+        <button class="back-btn" onclick="navigateTo('overview')">← Back to Overview</button>
+      </div>
+      <h2>Environments & Deployments</h2>
+      
+      <div class="panel">
+        <h3 style="margin-top:0; font-size:16px;">Request Deployment</h3>
+        <div class="form-group">
+          <select id="deployEnvSelect">
+            <option value="">Select Environment...</option>
+          </select>
+          <input type="text" id="deployDesc" placeholder="Deployment description (e.g. 'Release v1.2')" />
+          <button class="primary" onclick="requestDeployment()">Deploy</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 style="margin-top:0; font-size:16px;">Available Environments</h3>
+        <div id="envsContainer" class="loading">Loading environments...</div>
+      </div>
+    </div>
+
+    <!-- Incidents Section -->
+    <div id="incidents" class="section">
+      <div class="nav-header">
+        <button class="back-btn" onclick="navigateTo('overview')">← Back to Overview</button>
+      </div>
+      <h2>Active Incidents</h2>
+      <div class="panel">
+        <div id="incidentsContainer" class="loading">Loading incidents...</div>
+      </div>
     </div>
   </main>
 
-  <footer>AzureOps &mdash; portfolio project demonstrating Azure Cloud &amp; DevOps engineering</footer>
+  <div id="toast" class="toast">Action successful!</div>
 
   <script>
-    async function loadUsers() {
-      const container = document.getElementById('users-container');
-      try {
-        const res = await fetch('/api/users');
-        if (!res.ok) throw new Error('Request failed with status ' + res.status);
-        const users = await res.json();
-        if (!users.length) {
-          container.innerHTML = '<p class="sub">No users found.</p>';
-          return;
-        }
-        const rows = users.map(u => `
-          <tr>
-            <td>${u.DisplayName}</td>
-            <td>${u.Email}</td>
-            <td><span class="role-tag">${u.Role}</span></td>
-          </tr>
-        `).join('');
-        container.innerHTML = `
-          <table class="users">
-            <thead>
-              <tr><th>Name</th><th>Email</th><th>Role</th></tr>
-            </thead>
-            <tbody>${rows}</tbody>
-          </table>
-        `;
-      } catch (err) {
-        container.innerHTML = '<p class="fetch-error">Could not load live data: ' + err.message + '</p>';
+    let activeRole = 'CloudAdministrator';
+
+    async function init() {
+      document.getElementById('roleSelect').value = activeRole;
+      handleRoleChange();
+      
+      fetchUsers();
+      fetchEnvironments();
+      fetchIncidents();
+      
+      setInterval(fetchIncidents, 10000);
+    }
+
+    function handleRoleChange() {
+      activeRole = document.getElementById('roleSelect').value;
+      
+      const cardDeploy = document.getElementById('card-deployments');
+      const cardIncidents = document.getElementById('card-incidents');
+
+      if (activeRole === 'Developer') {
+        cardDeploy.classList.add('visible');
+        cardIncidents.classList.remove('visible');
+        navigateTo('overview');
+      } else if (activeRole === 'DevOpsEngineer') {
+        cardDeploy.classList.remove('visible');
+        cardIncidents.classList.add('visible');
+        navigateTo('overview');
+      } else { // CloudAdministrator
+        cardDeploy.classList.add('visible');
+        cardIncidents.classList.add('visible');
       }
     }
-    loadUsers();
+
+    function navigateTo(sectionId) {
+      document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+      document.getElementById(sectionId).classList.add('active');
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.innerText = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    async function fetchUsers() {
+      try {
+        const res = await fetch('/api/users');
+        const users = await res.json();
+        const container = document.getElementById('usersContainer');
+        
+        if (!users.length) {
+          container.innerHTML = '<p class="loading">No users found.</p>';
+          return;
+        }
+
+        let html = `<table><thead><tr><th>Name</th><th>Email</th><th>Role</th></tr></thead><tbody>`;
+        users.forEach(u => {
+          html += `<tr>
+            <td style="font-weight:500;">${u.DisplayName}</td>
+            <td style="color:var(--text-muted);">${u.Email}</td>
+            <td><span class="badge info">${u.Role}</span></td>
+          </tr>`;
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+      } catch (e) {
+        document.getElementById('usersContainer').innerHTML = `<p style="color:var(--danger)">Failed to load users</p>`;
+      }
+    }
+
+    async function fetchEnvironments() {
+      try {
+        const res = await fetch('/api/environments');
+        const environments = await res.json();
+        const container = document.getElementById('envsContainer');
+        const select = document.getElementById('deployEnvSelect');
+        
+        if (!environments.length) {
+          container.innerHTML = '<p class="loading">No environments found.</p>';
+          return;
+        }
+
+        let html = `<table><thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Status</th></tr></thead><tbody>`;
+        select.innerHTML = '<option value="">Select Environment...</option>';
+
+        environments.forEach(e => {
+          html += `<tr>
+            <td style="color:var(--text-muted);">#${e.EnvironmentId}</td>
+            <td style="font-weight:600;">${e.Name}</td>
+            <td><span class="badge info">${e.EnvironmentType}</span></td>
+            <td><span class="badge success">${e.Status}</span></td>
+          </tr>`;
+          select.innerHTML += `<option value="${e.EnvironmentId}">${e.Name} (${e.EnvironmentType})</option>`;
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+      } catch (e) {
+        document.getElementById('envsContainer').innerHTML = `<p style="color:var(--danger)">Failed to load environments</p>`;
+      }
+    }
+
+    async function fetchIncidents() {
+      if (activeRole === 'Developer') return;
+      
+      try {
+        const res = await fetch('/api/incidents');
+        const incidents = await res.json();
+        const container = document.getElementById('incidentsContainer');
+        
+        if (!incidents.length) {
+          container.innerHTML = '<p class="loading">No active incidents. System is healthy.</p>';
+          return;
+        }
+
+        let html = `<table><thead><tr><th>ID</th><th>Description</th><th>Severity</th><th>Status</th><th>Action</th></tr></thead><tbody>`;
+        incidents.forEach(i => {
+          let sevClass = i.Severity === 'High' || i.Severity === 'Critical' ? 'danger' : 'warning';
+          let statClass = i.Status === 'Resolved' ? 'success' : 'warning';
+          let actionCell = i.Status !== 'Resolved' 
+            ? `<button class="outline" onclick="remediateIncident(${i.IncidentId})">Remediate</button>`
+            : `<span style="color:var(--text-muted); font-size:13px; font-weight:500;">Resolved</span>`;
+
+          html += `<tr>
+            <td style="color:var(--text-muted);">#${i.IncidentId}</td>
+            <td style="font-weight:500;">${i.Description} <br/><small style="color:var(--text-muted); font-weight:normal;">Env: ${i.EnvironmentName || 'N/A'}</small></td>
+            <td><span class="badge ${sevClass}">${i.Severity}</span></td>
+            <td><span class="badge ${statClass}">${i.Status}</span></td>
+            <td>${actionCell}</td>
+          </tr>`;
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+      } catch (e) {
+        document.getElementById('incidentsContainer').innerHTML = `<p style="color:var(--danger)">Failed to load incidents</p>`;
+      }
+    }
+
+    async function requestDeployment() {
+      const envId = document.getElementById('deployEnvSelect').value;
+      const desc = document.getElementById('deployDesc').value;
+      if (!envId) return alert('Please select an environment');
+
+      try {
+        const res = await fetch('/api/deployments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            environmentId: parseInt(envId),
+            requestedBy: activeRole === 'Developer' ? 1 : 3,
+            description: desc || 'Manual deployment from console'
+          })
+        });
+
+        if (res.ok) {
+          showToast('Deployment requested successfully (Queued)');
+          document.getElementById('deployDesc').value = '';
+        } else {
+          alert('Failed to request deployment');
+        }
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    async function remediateIncident(id) {
+      const action = prompt("Enter remediation action taken:");
+      if (action === null) return;
+
+      try {
+        const res = await fetch('/api/remediate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ incidentId: id, actionTaken: action || 'Remediated via portal' })
+        });
+
+        if (res.ok) {
+          showToast('Incident remediated successfully');
+          fetchIncidents();
+        } else {
+          alert('Failed to remediate incident');
+        }
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    window.onload = init;
   </script>
 </body>
 </html>
