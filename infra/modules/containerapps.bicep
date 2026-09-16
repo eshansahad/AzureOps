@@ -5,6 +5,7 @@
 // primary, Key-Vault-integrated deployment). Reuses law-azureops-dev for
 // Container Apps logging rather than creating a second workspace.
 
+// infra/modules/containerapps.bicep
 @description('Location for ACR and Container Apps')
 param location string = 'centralus'
 
@@ -22,7 +23,7 @@ resource acr 'Microsoft.ContainerRegistry/registries@2023-07-01' = {
     name: 'Basic'
   }
   properties: {
-    adminUserEnabled: false // pull via managed identity, not admin credentials
+    adminUserEnabled: false
   }
 }
 
@@ -51,19 +52,10 @@ resource containerApp 'Microsoft.App/containerApps@2023-05-01' = {
     configuration: {
       ingress: {
         external: true
-        targetPort: 8080
+        targetPort: 80 // Matches containerapps-helloworld placeholder port
       }
-      registries: [
-        {
-          server: acr.properties.loginServer
-          identity: 'system'
-        }
-      ]
     }
     template: {
-      // Placeholder image so the first infra deploy succeeds before CI/CD
-      // has pushed a real build; the pipeline updates this via
-      // `az containerapp update --image` afterward.
       containers: [
         {
           name: 'azureops-portal'
@@ -82,8 +74,7 @@ resource containerApp 'Microsoft.App/containerApps@2023-05-01' = {
   }
 }
 
-// AcrPull role so the Container App's managed identity can pull images
-// without admin credentials or a stored password.
+// AcrPull role assignment for Container App managed identity
 var acrPullRoleId = '7f951dda-4ed3-4680-a7ca-43fe172d538d'
 
 resource acrPullRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {

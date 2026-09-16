@@ -1,0 +1,48 @@
+name: Deploy Container App
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - '.github/workflows/deploy-containerapp.yml'
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      # Builds remotely inside ACR — no local Docker daemon required.
+      - name: Build image in ACR
+        run: |
+          az acr build \
+            --registry acrazureopsdev \
+            --image azureops-portal:${{ github.sha }} \
+            --image azureops-portal:latest \
+            ./app
+
+      - name: Deploy new image to Container App
+        run: |
+          az containerapp registry set \
+            --name ca-azureops-dev \
+            --resource-group rg-azureops-dev \
+            --server acrazureopsdev.azurecr.io \
+            --identity system
+
+          az containerapp update \
+            --name ca-azureops-dev \
+            --resource-group rg-azureops-dev \
+            --image acrazureopsdev.azurecr.io/azureops-portal:${{ github.sha }} \
+            --target-port 8080
