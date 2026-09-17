@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>AzureOps Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <style>
   :root {
     /* Professional IT/Cloud SaaS Theme */
@@ -418,6 +419,65 @@
     transform: translateY(0);
     opacity: 1;
   }
+
+  /* Dashboard additions */
+  .live-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--success);
+    margin-left: 8px;
+    animation: pulse 1.5s infinite;
+    vertical-align: middle;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+    70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+  }
+
+  .event-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 14px;
+  }
+
+  .event-row:last-child { border-bottom: none; }
+
+  .event-type {
+    font-weight: 600;
+    color: var(--text-main);
+  }
+
+  .event-subject {
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  .event-time {
+    color: var(--text-muted);
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .chart-wrap {
+    position: relative;
+    height: 220px;
+  }
+
+  .row-new {
+    animation: rowFlash 1.5s ease-out;
+  }
+
+  @keyframes rowFlash {
+    from { background-color: var(--accent-light); }
+    to { background-color: transparent; }
+  }
 </style>
 </head>
 <body>
@@ -449,6 +509,10 @@
           <h3>Operational Incidents</h3>
           <p>Monitor and remediate live incidents</p>
         </div>
+        <div class="action-card visible" id="card-dashboard" onclick="navigateTo('dashboard')">
+          <h3>Live Dashboard</h3>
+          <p>Real-time events, alerts, and metrics</p>
+        </div>
       </div>
 
       <h2>System Overview</h2>
@@ -478,6 +542,8 @@
         <li>Azure SQL Database</li>
         <li>Azure App Service</li>
         <li>Azure Service Bus</li>
+        <li>Azure Event Grid</li>
+        <li>Azure Monitor</li>
         <li>Azure Resource Manager / Bicep</li>
       </ul>
 
@@ -506,6 +572,11 @@
       </div>
 
       <div class="panel">
+        <h3 style="margin-top:0; font-size:16px;">Recent Deployments</h3>
+        <div id="deploymentsContainer" class="loading">Loading deployments...</div>
+      </div>
+
+      <div class="panel">
         <h3 style="margin-top:0; font-size:16px;">Available Environments</h3>
         <div id="envsContainer" class="loading">Loading environments...</div>
       </div>
@@ -521,22 +592,56 @@
         <div id="incidentsContainer" class="loading">Loading incidents...</div>
       </div>
     </div>
+
+    <!-- Dashboard Section -->
+    <div id="dashboard" class="section">
+      <div class="nav-header">
+        <button class="back-btn" onclick="navigateTo('overview')">← Back to Overview</button>
+      </div>
+      <h2>Live Dashboard</h2>
+
+      <div class="panel">
+        <h3 style="margin-top:0; font-size:16px;">Request Volume (last hour) — Azure Monitor</h3>
+        <div class="chart-wrap">
+          <canvas id="metricsChart"></canvas>
+        </div>
+      </div>
+
+      <div class="panel">
+        <h3 style="margin-top:0; font-size:16px;">Active Azure Monitor Alerts</h3>
+        <div id="alertsContainer" class="loading">Loading alerts...</div>
+      </div>
+
+      <div class="panel">
+        <h3 style="margin-top:0; font-size:16px;">Live Platform Events<span class="live-dot"></span></h3>
+        <div id="eventsContainer" class="loading">Loading events...</div>
+      </div>
+    </div>
   </main>
 
   <div id="toast" class="toast">Action successful!</div>
 
   <script>
     let activeRole = 'CloudAdministrator';
+    let metricsChart = null;
 
     async function init() {
       document.getElementById('roleSelect').value = activeRole;
       handleRoleChange();
-      
+
       fetchUsers();
       fetchEnvironments();
       fetchIncidents();
-      
+      fetchDeployments();
+      fetchEvents();
+      fetchMetrics();
+      fetchAlerts();
+
       setInterval(fetchIncidents, 10000);
+      setInterval(fetchDeployments, 8000);
+      setInterval(fetchEvents, 6000);
+      setInterval(fetchMetrics, 60000);
+      setInterval(fetchAlerts, 30000);
     }
 
     function handleRoleChange() {
@@ -544,6 +649,7 @@
       
       const cardDeploy = document.getElementById('card-deployments');
       const cardIncidents = document.getElementById('card-incidents');
+      // Dashboard is read-only observability — visible to every persona.
 
       if (activeRole === 'Developer') {
         cardDeploy.classList.add('visible');
@@ -569,6 +675,16 @@
       toast.innerText = message;
       toast.classList.add('show');
       setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function timeAgo(isoString) {
+      if (!isoString) return '';
+      const diffMs = Date.now() - new Date(isoString).getTime();
+      const mins = Math.floor(diffMs / 60000);
+      if (mins < 1) return 'just now';
+      if (mins < 60) return `${mins}m ago`;
+      const hrs = Math.floor(mins / 60);
+      return `${hrs}h ago`;
     }
 
     async function fetchUsers() {
@@ -664,6 +780,143 @@
       }
     }
 
+    async function fetchDeployments() {
+      try {
+        const res = await fetch('/api/deployments');
+        const deployments = await res.json();
+        const container = document.getElementById('deploymentsContainer');
+
+        if (!deployments.length) {
+          container.innerHTML = '<p class="loading">No deployments yet.</p>';
+          return;
+        }
+
+        let html = `<table><thead><tr><th>ID</th><th>Environment</th><th>Requested By</th><th>Status</th><th>Started</th></tr></thead><tbody>`;
+        deployments.forEach(d => {
+          const statClass = d.Status === 'Completed' ? 'success' : (d.Status === 'Failed' ? 'danger' : 'warning');
+          html += `<tr>
+            <td style="color:var(--text-muted);">#${d.DeploymentId}</td>
+            <td style="font-weight:600;">${d.EnvironmentName || 'N/A'}</td>
+            <td>${d.RequestedBy}</td>
+            <td><span class="badge ${statClass}">${d.Status}</span></td>
+            <td class="event-time">${timeAgo(d.StartedAt)}</td>
+          </tr>`;
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+      } catch (e) {
+        document.getElementById('deploymentsContainer').innerHTML = `<p style="color:var(--danger)">Failed to load deployments</p>`;
+      }
+    }
+
+    async function fetchEvents() {
+      try {
+        const res = await fetch('/api/events');
+        const events = await res.json();
+        const container = document.getElementById('eventsContainer');
+
+        if (!events.length) {
+          container.innerHTML = '<p class="loading">No platform events yet.</p>';
+          return;
+        }
+
+        let html = '';
+        events.forEach(ev => {
+          html += `<div class="event-row">
+            <div>
+              <div class="event-type">${ev.EventType}</div>
+              <div class="event-subject">${ev.Subject || ''}</div>
+            </div>
+            <div class="event-time">${timeAgo(ev.OccurredAt)}</div>
+          </div>`;
+        });
+        container.innerHTML = html;
+      } catch (e) {
+        document.getElementById('eventsContainer').innerHTML = `<p style="color:var(--danger)">Failed to load events</p>`;
+      }
+    }
+
+    async function fetchMetrics() {
+      try {
+        const res = await fetch('/api/metrics');
+        const data = await res.json();
+        const ctx = document.getElementById('metricsChart');
+
+        const labels = (data.timestamps || []).map(t => new Date(t).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+        const requests = data.series?.Requests || [];
+        const http5xx = data.series?.Http5xx || [];
+
+        if (metricsChart) {
+          metricsChart.data.labels = labels;
+          metricsChart.data.datasets[0].data = requests;
+          metricsChart.data.datasets[1].data = http5xx;
+          metricsChart.update();
+        } else {
+          metricsChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+              labels,
+              datasets: [
+                {
+                  label: 'Requests',
+                  data: requests,
+                  borderColor: '#2563eb',
+                  backgroundColor: 'rgba(37,99,235,0.1)',
+                  tension: 0.3,
+                  fill: true
+                },
+                {
+                  label: 'HTTP 5xx',
+                  data: http5xx,
+                  borderColor: '#ef4444',
+                  backgroundColor: 'rgba(239,68,68,0.1)',
+                  tension: 0.3,
+                  fill: true
+                }
+              ]
+            },
+            options: {
+              responsive: true,
+              maintainAspectRatio: false,
+              plugins: { legend: { position: 'bottom' } },
+              scales: { y: { beginAtZero: true } }
+            }
+          });
+        }
+      } catch (e) {
+        console.error('Failed to load metrics', e);
+      }
+    }
+
+    async function fetchAlerts() {
+      try {
+        const res = await fetch('/api/alerts');
+        const alerts = await res.json();
+        const container = document.getElementById('alertsContainer');
+
+        if (!alerts.length) {
+          container.innerHTML = '<p class="loading">No active alerts. All clear.</p>';
+          return;
+        }
+
+        let html = `<table><thead><tr><th>Alert Rule</th><th>Severity</th><th>State</th><th>Fired</th></tr></thead><tbody>`;
+        alerts.forEach(a => {
+          const sevClass = ['Sev0', 'Sev1'].includes(a.severity) ? 'danger' : 'warning';
+          const stateClass = a.monitorCondition === 'Resolved' ? 'success' : 'warning';
+          html += `<tr>
+            <td style="font-weight:600;">${a.name || 'Unnamed alert'}</td>
+            <td><span class="badge ${sevClass}">${a.severity || 'N/A'}</span></td>
+            <td><span class="badge ${stateClass}">${a.monitorCondition || a.state || 'N/A'}</span></td>
+            <td class="event-time">${timeAgo(a.firedAt)}</td>
+          </tr>`;
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+      } catch (e) {
+        document.getElementById('alertsContainer').innerHTML = `<p style="color:var(--danger)">Failed to load alerts</p>`;
+      }
+    }
+
     async function requestDeployment() {
       const envId = document.getElementById('deployEnvSelect').value;
       const desc = document.getElementById('deployDesc').value;
@@ -681,8 +934,16 @@
         });
 
         if (res.ok) {
-          showToast('Deployment requested successfully (Queued)');
+          showToast('Deployment requested — queued for processing');
           document.getElementById('deployDesc').value = '';
+          fetchDeployments();
+          // Refresh a few more times over the next ~15s to catch the async
+          // Function actually picking it up and marking it Completed.
+          setTimeout(fetchDeployments, 4000);
+          setTimeout(fetchDeployments, 9000);
+          setTimeout(fetchDeployments, 15000);
+          setTimeout(fetchEvents, 5000);
+          setTimeout(fetchEvents, 10000);
         } else {
           alert('Failed to request deployment');
         }

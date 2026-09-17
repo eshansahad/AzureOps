@@ -2,11 +2,13 @@
 // POST /api/deployments — enqueues a deployment request to Service Bus
 // instead of writing to SQL directly, demonstrating reliable async
 // messaging between the portal and the processing Function.
+// GET /api/deployments — recent deployment history, so the dashboard can
+// show a request actually moving from Queued to Completed.
 
-// app/routes/deployments.js
 const express = require('express');
 const { ServiceBusClient } = require('@azure/service-bus');
 const { DefaultAzureCredential } = require('@azure/identity');
+const { getPool } = require('../db');
 
 const router = express.Router();
 
@@ -54,6 +56,30 @@ router.post('/api/deployments', async (req, res) => {
       error: 'Failed to queue deployment request',
       detail: err.message
     });
+  }
+});
+
+router.get('/api/deployments', async (req, res) => {
+  try {
+    const pool = await getPool();
+    const result = await pool.request().query(`
+      SELECT TOP 15
+        d.DeploymentId,
+        d.EnvironmentId,
+        e.Name AS EnvironmentName,
+        d.AppName,
+        d.RequestedBy,
+        d.Status,
+        d.StartedAt,
+        d.CompletedAt
+      FROM Deployments d
+      LEFT JOIN Environments e ON d.EnvironmentId = e.EnvironmentId
+      ORDER BY d.StartedAt DESC
+    `);
+    res.status(200).json(result.recordset);
+  } catch (err) {
+    console.error('Failed to fetch deployments:', err.message);
+    res.status(500).json({ error: 'Failed to fetch deployments', detail: err.message });
   }
 });
 

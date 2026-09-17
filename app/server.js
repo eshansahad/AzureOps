@@ -29,10 +29,16 @@ app.use(express.static(path.join(__dirname, 'public')));
 const deploymentsRouter = require('./routes/deployments');
 const incidentsRouter = require('./routes/incidents');
 const remediateRouter = require('./routes/remediate');
+const eventsRouter = require('./routes/events');
+const metricsRouter = require('./routes/metrics');
+const alertsRouter = require('./routes/alerts');
 
 app.use(deploymentsRouter);
 app.use(incidentsRouter);
 app.use(remediateRouter);
+app.use(eventsRouter);
+app.use(metricsRouter);
+app.use(alertsRouter);
 
 app.get('/health', (req, res) => {
   res.status(200).json({
