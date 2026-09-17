@@ -171,8 +171,7 @@ module monitoringAccess 'modules/monitoringaccess.bicep' = {
   name: 'deploy-monitoring-access'
   scope: rg
   params: {
-    // Assuming your module takes a principalId to grant access
-    principalId: appService.identity.principalId 
+    principalId: appService.outputs.appServicePrincipalId // Corrected output reference
   }
 }
 
