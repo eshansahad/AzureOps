@@ -167,6 +167,15 @@ module containerapps 'modules/containerapps.bicep' = {
   }
 }
 
+module monitoringAccess 'modules/monitoringaccess.bicep' = {
+  name: 'deploy-monitoring-access'
+  scope: rg
+  params: {
+    // Assuming your module takes a principalId to grant access
+    principalId: appService.identity.principalId 
+  }
+}
+
 output resourceGroupName string = rg.name
 output keyVaultName string = keyVault.outputs.keyVaultName
 output sqlServerFqdn string = sql.outputs.sqlServerFqdn
