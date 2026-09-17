@@ -171,7 +171,7 @@ module monitoringAccess 'modules/monitoringaccess.bicep' = {
   name: 'deploy-monitoring-access'
   scope: rg
   params: {
-    principalId: appService.outputs.appServicePrincipalId // Corrected output reference
+    appServiceName: 'app-azureops-dev'
   }
 }
 
