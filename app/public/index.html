@@ -8,34 +8,34 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <style>
   :root {
-    /* Professional IT/Cloud SaaS Theme */
-    --bg-main: #f8fafc;        /* Slate 50 - very light cool grey */
-    --bg-header: #0f172a;      /* Slate 900 - dark commanding header */
-    --bg-panel: #ffffff;       /* Pure white content cards */
+    /* Professional IT/Cloud SaaS Theme - Dark Mode */
+    --bg-main: #0f172a;        /* Slate 900 */
+    --bg-header: #020617;      /* Slate 950 */
+    --bg-panel: #1e293b;       /* Slate 800 */
     
-    --text-main: #0f172a;      /* High contrast dark slate */
-    --text-muted: #64748b;     /* Slate 500 for secondary text */
-    --text-light: #f8fafc;     /* Light text on dark backgrounds */
+    --text-main: #f8fafc;      /* Slate 50 */
+    --text-muted: #94a3b8;     /* Slate 400 */
+    --text-light: #ffffff;     /* White */
     
-    --border: #e2e8f0;         /* Slate 200 */
-    --border-dark: #1e293b;    /* Slate 800 */
+    --border: #334155;         /* Slate 700 */
+    --border-dark: #0f172a;    /* Slate 900 */
     
-    --accent: #2563eb;         /* Blue 600 - Standard cloud primary action */
-    --accent-hover: #1d4ed8;   /* Blue 700 */
-    --accent-light: #eff6ff;   /* Blue 50 */
+    --accent: #3b82f6;         /* Blue 500 */
+    --accent-hover: #60a5fa;   /* Blue 400 */
+    --accent-light: rgba(59, 130, 246, 0.1); /* Blue 500 transparent */
     
     /* Semantic Colors */
     --success: #10b981;
-    --success-bg: #ecfdf5;
+    --success-bg: rgba(16, 185, 129, 0.1);
     --warning: #f59e0b;
-    --warning-bg: #fffbeb;
+    --warning-bg: rgba(245, 158, 11, 0.1);
     --danger: #ef4444;
-    --danger-bg: #fef2f2;
+    --danger-bg: rgba(239, 68, 68, 0.1);
     
     /* Modern Shadows */
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.6), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
   }
   
   * { box-sizing: border-box; }
@@ -87,31 +87,37 @@
     box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
   }
 
-  .role-selector {
+  .role-container {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    padding: 16px 24px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 16px;
   }
 
-  .role-selector label {
-    font-size: 13px;
-    color: #94a3b8;
+  .role-container label {
+    font-size: 14px;
+    color: var(--text-muted);
     font-weight: 500;
   }
 
-  header select {
-    background: #1e293b;
-    color: #f8fafc;
-    border: 1px solid #334155;
+  .role-container select {
+    background: var(--bg-main);
+    color: var(--text-main);
+    border: 1px solid var(--border);
     padding: 8px 12px;
     border-radius: 6px;
     font-family: inherit;
-    font-size: 13px;
+    font-size: 14px;
     outline: none;
     transition: all 0.2s;
   }
   
-  header select option {
+  .role-container select option {
     background: var(--bg-panel);
     color: var(--text-main);
   }
@@ -128,9 +134,9 @@
     transition: all 0.2s;
   }
   
-  select:focus, input[type="text"]:focus, header select:focus {
+  select:focus, input[type="text"]:focus, .role-container select:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
   }
 
   main {
@@ -486,7 +492,10 @@
       <div class="mark">A</div>
       AzureOps
     </div>
-    <div class="role-selector">
+  </header>
+
+  <main>
+    <div class="role-container">
       <label>Role / Persona:</label>
       <select id="roleSelect" onchange="handleRoleChange()">
         <option value="CloudAdministrator" selected>Cloud Administrator</option>
@@ -494,13 +503,15 @@
         <option value="Developer">Developer</option>
       </select>
     </div>
-  </header>
 
-  <main>
     <!-- Overview Section (Main Index) -->
     <div id="overview" class="section active">
       
       <div class="action-grid">
+        <div class="action-card visible" id="card-users" onclick="document.getElementById('usersContainer').scrollIntoView({behavior: 'smooth', block: 'center'})">
+          <h3>User Management</h3>
+          <p>System overview and user administration</p>
+        </div>
         <div class="action-card visible" id="card-deployments" onclick="navigateTo('deployments')">
           <h3>Request Deployment</h3>
           <p>Deploy applications to specific environments</p>
@@ -649,19 +660,23 @@
       
       const cardDeploy = document.getElementById('card-deployments');
       const cardIncidents = document.getElementById('card-incidents');
+      const cardUsers = document.getElementById('card-users');
       // Dashboard is read-only observability — visible to every persona.
 
       if (activeRole === 'Developer') {
         cardDeploy.classList.add('visible');
         cardIncidents.classList.remove('visible');
+        cardUsers.classList.remove('visible');
         navigateTo('overview');
       } else if (activeRole === 'DevOpsEngineer') {
         cardDeploy.classList.remove('visible');
         cardIncidents.classList.add('visible');
+        cardUsers.classList.remove('visible');
         navigateTo('overview');
       } else { // CloudAdministrator
         cardDeploy.classList.add('visible');
         cardIncidents.classList.add('visible');
+        cardUsers.classList.add('visible');
       }
     }
 
@@ -698,12 +713,13 @@
           return;
         }
 
-        let html = `<table><thead><tr><th>Name</th><th>Email</th><th>Role</th></tr></thead><tbody>`;
+        let html = `<table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr></thead><tbody>`;
         users.forEach(u => {
           html += `<tr>
             <td style="font-weight:500;">${u.DisplayName}</td>
             <td style="color:var(--text-muted);">${u.Email}</td>
             <td><span class="badge info">${u.Role}</span></td>
+            <td><button class="outline" onclick="window.location.href='user.html?id=${u.UserId}'">View Details</button></td>
           </tr>`;
         });
         html += '</tbody></table>';

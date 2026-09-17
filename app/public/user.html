@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AzureOps Portal - User Details</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Professional IT/Cloud SaaS Theme - Dark Mode */
+    --bg-main: #0f172a;        /* Slate 900 */
+    --bg-header: #020617;      /* Slate 950 */
+    --bg-panel: #1e293b;       /* Slate 800 */
+    
+    --text-main: #f8fafc;      /* Slate 50 */
+    --text-muted: #94a3b8;     /* Slate 400 */
+    --text-light: #ffffff;     /* White */
+    
+    --border: #334155;         /* Slate 700 */
+    --border-dark: #0f172a;    /* Slate 900 */
+    
+    --accent: #3b82f6;         /* Blue 500 */
+    --accent-hover: #60a5fa;   /* Blue 400 */
+    --accent-light: rgba(59, 130, 246, 0.1);
+    
+    --success: #10b981;
+    --success-bg: rgba(16, 185, 129, 0.1);
+    
+    /* Modern Shadows */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.6), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
+  }
+  
+  * { box-sizing: border-box; }
+  
+  body {
+    margin: 0;
+    font-family: 'Inter', -apple-system, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 40px;
+    background: var(--bg-header);
+    border-bottom: 1px solid var(--border-dark);
+    box-shadow: var(--shadow-sm);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .brand {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-light);
+    letter-spacing: -0.025em;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .brand .mark {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: var(--accent);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
+  }
+
+  main {
+    max-width: 800px;
+    margin: 40px auto;
+    width: 100%;
+    padding: 0 24px;
+    flex: 1;
+  }
+
+  .nav-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+  }
+
+  .back-btn {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.2s;
+    box-shadow: var(--shadow-sm);
+    text-decoration: none;
+  }
+
+  .back-btn:hover {
+    background: var(--bg-main);
+    color: var(--text-main);
+    border-color: #cbd5e1;
+  }
+
+  .panel {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 32px;
+    box-shadow: var(--shadow-md);
+  }
+
+  .user-header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 32px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--accent-light);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 600;
+  }
+
+  .user-info h1 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    color: var(--text-light);
+  }
+
+  .user-info p {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 15px;
+  }
+
+  .badge {
+    padding: 4px 12px;
+    border-radius: 9999px;
+    font-size: 13px;
+    font-weight: 600;
+    display: inline-block;
+    background: var(--accent-light);
+    color: var(--accent);
+    margin-top: 12px;
+  }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 16px;
+    color: var(--text-light);
+  }
+
+  .functions-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 12px;
+  }
+
+  .functions-list li {
+    background: var(--bg-main);
+    border: 1px solid var(--border);
+    padding: 16px;
+    border-radius: 6px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .functions-list li::before {
+    content: "✓";
+    color: var(--success);
+    font-weight: bold;
+    font-size: 16px;
+  }
+
+  .func-title {
+    display: block;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 4px;
+  }
+
+  .func-desc {
+    display: block;
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+
+  .loading, .error {
+    text-align: center;
+    padding: 40px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+  
+  .error {
+    color: var(--danger);
+    font-style: normal;
+  }
+</style>
+</head>
+<body>
+  <header>
+    <a href="index.html" class="brand">
+      <div class="mark">A</div>
+      AzureOps
+    </a>
+  </header>
+
+  <main>
+    <div class="nav-header">
+      <a href="index.html" class="back-btn">← Back to Dashboard</a>
+    </div>
+
+    <div class="panel" id="contentArea">
+      <div class="loading">Loading user details...</div>
+    </div>
+  </main>
+
+  <script>
+    const roleFunctions = {
+      'CloudAdministrator': [
+        { title: 'Full Platform Access', desc: 'Can configure all Azure services and portal settings.' },
+        { title: 'User Management', desc: 'Can manage user roles, permissions, and access policies.' },
+        { title: 'Infrastructure Deployment', desc: 'Can deploy and destroy environments across all stages.' },
+        { title: 'Incident Resolution', desc: 'Can acknowledge and remediate all tier 1 and tier 2 incidents.' }
+      ],
+      'DevOpsEngineer': [
+        { title: 'Infrastructure Deployment', desc: 'Can trigger manual deployments and manage CI/CD pipelines.' },
+        { title: 'Incident Resolution', desc: 'Can remediate operational incidents and view all alerts.' },
+        { title: 'Observability', desc: 'Full access to dashboards, metrics, and logs.' }
+      ],
+      'Developer': [
+        { title: 'Deployment Requests', desc: 'Can request deployments to Dev and QA environments.' },
+        { title: 'Observability', desc: 'Read-only access to dashboards and application logs.' }
+      ]
+    };
+
+    async function loadUser() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const userId = parseInt(urlParams.get('id'));
+      const container = document.getElementById('contentArea');
+
+      if (!userId) {
+        container.innerHTML = '<div class="error">Invalid User ID provided.</div>';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/users');
+        const users = await res.json();
+        const user = users.find(u => u.UserId === userId);
+
+        if (!user) {
+          container.innerHTML = '<div class="error">User not found.</div>';
+          return;
+        }
+
+        const initials = user.DisplayName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        const functions = roleFunctions[user.Role] || [{ title: 'Standard Access', desc: 'Basic access to the platform.' }];
+        
+        let functionsHtml = functions.map(f => `
+          <li>
+            <div>
+              <span class="func-title">${f.title}</span>
+              <span class="func-desc">${f.desc}</span>
+            </div>
+          </li>
+        `).join('');
+
+        container.innerHTML = `
+          <div class="user-header">
+            <div class="avatar">${initials}</div>
+            <div class="user-info">
+              <h1>${user.DisplayName}</h1>
+              <p>${user.Email}</p>
+              <div class="badge">${user.Role}</div>
+            </div>
+          </div>
+          
+          <div class="user-functions">
+            <h3 class="section-title">Roles & Functions</h3>
+            <ul class="functions-list">
+              ${functionsHtml}
+            </ul>
+          </div>
+        `;
+      } catch (e) {
+        container.innerHTML = '<div class="error">Failed to load user details. Please try again.</div>';
+      }
+    }
+
+    window.onload = loadUser;
+  </script>
+</body>
+</html>
