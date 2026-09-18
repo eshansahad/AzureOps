@@ -588,6 +588,19 @@
         <div id="deploymentsContainer" class="loading">Loading deployments...</div>
       </div>
 
+      <div class="panel" id="adminEnvControls" style="display:none;">
+        <h3 style="margin-top:0; font-size:16px;">Manage Environments</h3>
+        <div class="form-group">
+          <input type="text" id="newEnvName" placeholder="Environment name (e.g. 'Staging')" />
+          <select id="newEnvType">
+            <option value="Dev">Development</option>
+            <option value="Staging">Staging</option>
+            <option value="Prod">Production</option>
+          </select>
+          <button class="primary" onclick="createEnvironment()">Create</button>
+        </div>
+      </div>
+
       <div class="panel">
         <h3 style="margin-top:0; font-size:16px;">Available Environments</h3>
         <div id="envsContainer" class="loading">Loading environments...</div>
@@ -662,7 +675,11 @@
       const cardDeploy = document.getElementById('card-deployments');
       const cardIncidents = document.getElementById('card-incidents');
       const cardUsers = document.getElementById('card-users');
-      // Dashboard is read-only observability — visible to every persona.
+      const adminEnvControls = document.getElementById('adminEnvControls');
+      
+      if (adminEnvControls) {
+        adminEnvControls.style.display = activeRole === 'CloudAdministrator' ? 'block' : 'none';
+      }
 
       if (activeRole === 'Developer') {
         cardDeploy.classList.add('visible');
@@ -679,6 +696,7 @@
         cardIncidents.classList.add('visible');
         cardUsers.classList.add('visible');
       }
+      fetchEnvironments();
     }
 
     function navigateTo(sectionId) {
@@ -732,49 +750,72 @@
 
     async function fetchEnvironments() {
       try {
-          const res = await fetch('/api/environments');
-          const envs = await res.json();
-          
-          // 1. Populate Dropdown (Active only) - fixed ID to match deployEnvSelect
-          const dropdown = document.getElementById('deployEnvSelect');
-          if (dropdown) {
-              dropdown.innerHTML = '<option value="">Select Environment...</option>';
-              envs.filter(e => e.Status === 'Active').forEach(e => {
-                  dropdown.innerHTML += `<option value="${e.EnvironmentId}">${e.Name} (${e.EnvironmentType})</option>`;
-              });
-          }
-
-          // 2. Render Table with Decommission logic - fixed ID to match envsContainer
-          const container = document.getElementById('envsContainer');
-          if (!container) return;
-          
-          let html = `<table><thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody>`;
-          
-          envs.forEach(e => {
-              const statClass = e.Status === 'Active' ? 'success' : 'warning';
-              // Only show decommission button to Cloud Administrator on Active rows
-              const actionBtn = (activeRole === 'Cloud Administrator' && e.Status === 'Active') 
-                  ? `<button onclick="decommissionEnvironment(${e.EnvironmentId})" style="background:var(--danger);color:white;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;">Decommission</button>` 
-                  : `<span style="color:var(--text-muted)">-</span>`;
-
-              html += `<tr>
-                  <td style="color:var(--text-muted)">#${e.EnvironmentId}</td>
-                  <td style="font-weight:600">${e.Name}</td>
-                  <td>${e.EnvironmentType}</td>
-                  <td><span class="badge ${statClass}">${e.Status}</span></td>
-                  <td>${actionBtn}</td>
-              </tr>`;
+        const res = await fetch('/api/environments');
+        const envs = await res.json();
+        
+        const dropdown = document.getElementById('deployEnvSelect');
+        if (dropdown) {
+          dropdown.innerHTML = '<option value="">Select Environment...</option>';
+          envs.filter(e => e.Status === 'Active').forEach(e => {
+            dropdown.innerHTML += `<option value="${e.EnvironmentId}">${e.Name} (${e.EnvironmentType})</option>`;
           });
-          container.innerHTML = html + `</tbody></table>`;
+        }
+
+        const container = document.getElementById('envsContainer');
+        if (!container) return;
+        
+        let html = `<table><thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody>`;
+        
+        envs.forEach(e => {
+          const statClass = e.Status === 'Active' ? 'success' : 'warning';
+          // Fixed role string matching Bug 1 ('CloudAdministrator' without space)
+          const actionBtn = (activeRole === 'CloudAdministrator' && e.Status === 'Active') 
+            ? `<button onclick="decommissionEnvironment(${e.EnvironmentId})" style="background:var(--danger);color:white;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;">Decommission</button>` 
+            : `<span style="color:var(--text-muted)">-</span>`;
+
+          html += `<tr>
+            <td style="color:var(--text-muted)">#${e.EnvironmentId}</td>
+            <td style="font-weight:600">${e.Name}</td>
+            <td>${e.EnvironmentType}</td>
+            <td><span class="badge ${statClass}">${e.Status}</span></td>
+            <td>${actionBtn}</td>
+          </tr>`;
+        });
+        container.innerHTML = html + `</tbody></table>`;
       } catch (e) {
-          console.error('Failed to load environments', e);
+        console.error('Failed to load environments', e);
       }
-  }
+    }
+
+    async function createEnvironment() {
+      const name = document.getElementById('newEnvName').value.trim();
+      const type = document.getElementById('newEnvType').value;
+      if (!name) return alert('Please enter an environment name');
+
+      try {
+        const res = await fetch('/api/environments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, type })
+        });
+
+        if (res.ok) {
+          showToast(`Environment "${name}" created`);
+          document.getElementById('newEnvName').value = '';
+          fetchEnvironments();
+        } else {
+          alert('Failed to create environment');
+        }
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    }
 
     async function decommissionEnvironment(id) {
       if(!confirm('Are you sure you want to decommission this environment?')) return;
       
-      const res = await fetch(`/api/environments/${id}/decommission`, { method: 'PUT' });
+      // Fixed HTTP Method Bug 2 (changed PUT to POST to match router)
+      const res = await fetch(`/api/environments/${id}/decommission`, { method: 'POST' });
       if(res.ok) {
         fetchEnvironments(); // Refresh table
       } else {
@@ -975,8 +1016,6 @@
           showToast('Deployment requested — queued for processing');
           document.getElementById('deployDesc').value = '';
           fetchDeployments();
-          // Refresh a few more times over the next ~15s to catch the async
-          // Function actually picking it up and marking it Completed.
           setTimeout(fetchDeployments, 4000);
           setTimeout(fetchDeployments, 9000);
           setTimeout(fetchDeployments, 15000);
