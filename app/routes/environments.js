@@ -46,7 +46,7 @@ router.post('/api/environments', async (req, res) => {
 });
 
 // Decommission (Soft Delete)
-router.put('/api/environments/:id/decommission', async (req, res) => {
+router.post('/api/environments/:id/decommission', async (req, res) => {
     const { id } = req.params;
     try {
         const pool = await getPool();
