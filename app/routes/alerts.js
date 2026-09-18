@@ -33,7 +33,7 @@ router.get('/api/alerts', async (req, res) => {
     const data = await response.json();
     const alerts = (data.value || []).map(a => ({
       id: a.name,
-      name: a.properties?.essentials?.alertRule,
+      name: (a.properties?.essentials?.alertRule || '').split('/').pop(),
       severity: a.properties?.essentials?.severity,
       state: a.properties?.essentials?.alertState,
       monitorCondition: a.properties?.essentials?.monitorCondition,
