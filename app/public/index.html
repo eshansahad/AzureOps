@@ -6,37 +6,36 @@
 <title>AzureOps Portal</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
   :root {
-    /* Professional IT/Cloud SaaS Theme - Dark Mode */
-    --bg-main: #0f172a;        /* Slate 900 */
-    --bg-header: #020617;      /* Slate 950 */
-    --bg-panel: #1e293b;       /* Slate 800 */
+    /* Professional IT/Cloud SaaS Theme */
+    --bg-main: #f8fafc;        /* Slate 50 - very light cool grey */
+    --bg-header: #0f172a;      /* Slate 900 - dark commanding header */
+    --bg-panel: #ffffff;       /* Pure white content cards */
     
-    --text-main: #f8fafc;      /* Slate 50 */
-    --text-muted: #94a3b8;     /* Slate 400 */
-    --text-light: #ffffff;     /* White */
+    --text-main: #0f172a;      /* High contrast dark slate */
+    --text-muted: #64748b;     /* Slate 500 for secondary text */
+    --text-light: #f8fafc;     /* Light text on dark backgrounds */
     
-    --border: #334155;         /* Slate 700 */
-    --border-dark: #0f172a;    /* Slate 900 */
+    --border: #e2e8f0;         /* Slate 200 */
+    --border-dark: #1e293b;    /* Slate 800 */
     
-    --accent: #3b82f6;         /* Blue 500 */
-    --accent-hover: #60a5fa;   /* Blue 400 */
-    --accent-light: rgba(59, 130, 246, 0.1); /* Blue 500 transparent */
+    --accent: #2563eb;         /* Blue 600 - Standard cloud primary action */
+    --accent-hover: #1d4ed8;   /* Blue 700 */
+    --accent-light: #eff6ff;   /* Blue 50 */
     
     /* Semantic Colors */
     --success: #10b981;
-    --success-bg: rgba(16, 185, 129, 0.1);
+    --success-bg: #ecfdf5;
     --warning: #f59e0b;
-    --warning-bg: rgba(245, 158, 11, 0.1);
+    --warning-bg: #fffbeb;
     --danger: #ef4444;
-    --danger-bg: rgba(239, 68, 68, 0.1);
+    --danger-bg: #fef2f2;
     
     /* Modern Shadows */
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.6), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   }
   
   * { box-sizing: border-box; }
@@ -88,37 +87,31 @@
     box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
   }
 
-  .role-container {
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    padding: 16px 24px;
-    border-radius: 8px;
-    margin-bottom: 24px;
-    box-shadow: var(--shadow-sm);
+  .role-selector {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
   }
 
-  .role-container label {
-    font-size: 14px;
-    color: var(--text-muted);
+  .role-selector label {
+    font-size: 13px;
+    color: #94a3b8;
     font-weight: 500;
   }
 
-  .role-container select {
-    background: var(--bg-main);
-    color: var(--text-main);
-    border: 1px solid var(--border);
+  header select {
+    background: #1e293b;
+    color: #f8fafc;
+    border: 1px solid #334155;
     padding: 8px 12px;
     border-radius: 6px;
     font-family: inherit;
-    font-size: 14px;
+    font-size: 13px;
     outline: none;
     transition: all 0.2s;
   }
   
-  .role-container select option {
+  header select option {
     background: var(--bg-panel);
     color: var(--text-main);
   }
@@ -135,9 +128,9 @@
     transition: all 0.2s;
   }
   
-  select:focus, input[type="text"]:focus, .role-container select:focus {
+  select:focus, input[type="text"]:focus, header select:focus {
     border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
   }
 
   main {
@@ -493,10 +486,7 @@
       <div class="mark">A</div>
       AzureOps
     </div>
-  </header>
-
-  <main>
-    <div class="role-container">
+    <div class="role-selector">
       <label>Role / Persona:</label>
       <select id="roleSelect" onchange="handleRoleChange()">
         <option value="CloudAdministrator" selected>Cloud Administrator</option>
@@ -504,15 +494,13 @@
         <option value="Developer">Developer</option>
       </select>
     </div>
+  </header>
 
+  <main>
     <!-- Overview Section (Main Index) -->
     <div id="overview" class="section active">
       
       <div class="action-grid">
-        <div class="action-card visible" id="card-users" onclick="document.getElementById('usersContainer').scrollIntoView({behavior: 'smooth', block: 'center'})">
-          <h3>User Management</h3>
-          <p>System overview and user administration</p>
-        </div>
         <div class="action-card visible" id="card-deployments" onclick="navigateTo('deployments')">
           <h3>Request Deployment</h3>
           <p>Deploy applications to specific environments</p>
@@ -588,6 +576,22 @@
         <div id="deploymentsContainer" class="loading">Loading deployments...</div>
       </div>
 
+      <div class="panel" id="adminEnvControls" style="display:none;">
+        <h3 style="margin-top:0; font-size:16px;">Manage Environments</h3>
+        <div class="form-group">
+          <input type="text" id="newEnvName" placeholder="Environment name (e.g. 'Staging')" />
+          <select id="newEnvType">
+            <option value="Dev">Development</option>
+            <option value="Staging">Staging</option>
+            <option value="Prod">Production</option>
+          </select>
+          <button class="primary" onclick="createEnvironment()">Create</button>
+        </div>
+        <p style="color:var(--text-muted); font-size:13px; margin:12px 0 0;">
+          Decommissioning retires an environment (soft delete) — its deployment and incident history is preserved, it just stops appearing as a deploy target.
+        </p>
+      </div>
+
       <div class="panel">
         <h3 style="margin-top:0; font-size:16px;">Available Environments</h3>
         <div id="envsContainer" class="loading">Loading environments...</div>
@@ -661,24 +665,25 @@
       
       const cardDeploy = document.getElementById('card-deployments');
       const cardIncidents = document.getElementById('card-incidents');
-      const cardUsers = document.getElementById('card-users');
+      const adminEnvControls = document.getElementById('adminEnvControls');
       // Dashboard is read-only observability — visible to every persona.
+      // Environment create/decommission is admin-only — infra lifecycle,
+      // not a deployment action a Developer or DevOps Engineer should trigger.
+      adminEnvControls.style.display = activeRole === 'CloudAdministrator' ? 'block' : 'none';
 
       if (activeRole === 'Developer') {
         cardDeploy.classList.add('visible');
         cardIncidents.classList.remove('visible');
-        cardUsers.classList.remove('visible');
         navigateTo('overview');
       } else if (activeRole === 'DevOpsEngineer') {
         cardDeploy.classList.remove('visible');
         cardIncidents.classList.add('visible');
-        cardUsers.classList.remove('visible');
         navigateTo('overview');
       } else { // CloudAdministrator
         cardDeploy.classList.add('visible');
         cardIncidents.classList.add('visible');
-        cardUsers.classList.add('visible');
       }
+      fetchEnvironments();
     }
 
     function navigateTo(sectionId) {
@@ -714,13 +719,12 @@
           return;
         }
 
-        let html = `<table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr></thead><tbody>`;
+        let html = `<table><thead><tr><th>Name</th><th>Email</th><th>Role</th></tr></thead><tbody>`;
         users.forEach(u => {
           html += `<tr>
             <td style="font-weight:500;">${u.DisplayName}</td>
             <td style="color:var(--text-muted);">${u.Email}</td>
             <td><span class="badge info">${u.Role}</span></td>
-            <td><button class="outline" onclick="window.location.href='user.html?id=${u.UserId}'">View Details</button></td>
           </tr>`;
         });
         html += '</tbody></table>';
@@ -732,53 +736,88 @@
 
     async function fetchEnvironments() {
       try {
-          const res = await fetch('/api/environments');
-          const envs = await res.json();
-          
-          // 1. Populate Dropdown (Active only) - fixed ID to match deployEnvSelect
-          const dropdown = document.getElementById('deployEnvSelect');
-          if (dropdown) {
-              dropdown.innerHTML = '<option value="">Select Environment...</option>';
-              envs.filter(e => e.Status === 'Active').forEach(e => {
-                  dropdown.innerHTML += `<option value="${e.EnvironmentId}">${e.Name} (${e.EnvironmentType})</option>`;
-              });
+        const res = await fetch('/api/environments');
+        const environments = await res.json();
+        const container = document.getElementById('envsContainer');
+        const select = document.getElementById('deployEnvSelect');
+        const isAdmin = activeRole === 'CloudAdministrator';
+        
+        if (!environments.length) {
+          container.innerHTML = '<p class="loading">No environments found.</p>';
+          select.innerHTML = '<option value="">Select Environment...</option>';
+          return;
+        }
+
+        let html = `<table><thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Status</th>${isAdmin ? '<th>Action</th>' : ''}</tr></thead><tbody>`;
+        select.innerHTML = '<option value="">Select Environment...</option>';
+
+        environments.forEach(e => {
+          const isActive = e.Status === 'Active';
+          const statusClass = isActive ? 'success' : 'danger';
+          const actionCell = isAdmin
+            ? `<td>${isActive ? `<button class="outline" onclick="decommissionEnvironment(${e.EnvironmentId}, '${e.Name}')">Decommission</button>` : `<span style="color:var(--text-muted); font-size:13px;">Retired</span>`}</td>`
+            : '';
+
+          html += `<tr>
+            <td style="color:var(--text-muted);">#${e.EnvironmentId}</td>
+            <td style="font-weight:600;">${e.Name}</td>
+            <td><span class="badge info">${e.EnvironmentType}</span></td>
+            <td><span class="badge ${statusClass}">${e.Status}</span></td>
+            ${actionCell}
+          </tr>`;
+
+          // Only active environments are valid deploy targets.
+          if (isActive) {
+            select.innerHTML += `<option value="${e.EnvironmentId}">${e.Name} (${e.EnvironmentType})</option>`;
           }
-
-          // 2. Render Table with Decommission logic - fixed ID to match envsContainer
-          const container = document.getElementById('envsContainer');
-          if (!container) return;
-          
-          let html = `<table><thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody>`;
-          
-          envs.forEach(e => {
-              const statClass = e.Status === 'Active' ? 'success' : 'warning';
-              // Only show decommission button to Cloud Administrator on Active rows
-              const actionBtn = (activeRole === 'Cloud Administrator' && e.Status === 'Active') 
-                  ? `<button onclick="decommissionEnvironment(${e.EnvironmentId})" style="background:var(--danger);color:white;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;">Decommission</button>` 
-                  : `<span style="color:var(--text-muted)">-</span>`;
-
-              html += `<tr>
-                  <td style="color:var(--text-muted)">#${e.EnvironmentId}</td>
-                  <td style="font-weight:600">${e.Name}</td>
-                  <td>${e.EnvironmentType}</td>
-                  <td><span class="badge ${statClass}">${e.Status}</span></td>
-                  <td>${actionBtn}</td>
-              </tr>`;
-          });
-          container.innerHTML = html + `</tbody></table>`;
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
       } catch (e) {
-          console.error('Failed to load environments', e);
+        document.getElementById('envsContainer').innerHTML = `<p style="color:var(--danger)">Failed to load environments</p>`;
       }
-  }
+    }
 
-    async function decommissionEnvironment(id) {
-      if(!confirm('Are you sure you want to decommission this environment?')) return;
-      
-      const res = await fetch(`/api/environments/${id}/decommission`, { method: 'PUT' });
-      if(res.ok) {
-        fetchEnvironments(); // Refresh table
-      } else {
-        alert('Failed to decommission environment');
+    async function createEnvironment() {
+      const name = document.getElementById('newEnvName').value.trim();
+      const environmentType = document.getElementById('newEnvType').value;
+      if (!name) return alert('Please enter an environment name');
+
+      try {
+        const res = await fetch('/api/environments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, environmentType })
+        });
+
+        if (res.ok) {
+          showToast(`Environment "${name}" created`);
+          document.getElementById('newEnvName').value = '';
+          fetchEnvironments();
+          setTimeout(fetchEvents, 4000);
+        } else {
+          alert('Failed to create environment');
+        }
+      } catch (e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    async function decommissionEnvironment(id, name) {
+      if (!confirm(`Decommission "${name}"? It will stop appearing as a deploy target. Its deployment and incident history is kept.`)) return;
+
+      try {
+        const res = await fetch(`/api/environments/${id}/decommission`, { method: 'POST' });
+
+        if (res.ok) {
+          showToast(`Environment "${name}" decommissioned`);
+          fetchEnvironments();
+          setTimeout(fetchEvents, 4000);
+        } else {
+          alert('Failed to decommission environment');
+        }
+      } catch (e) {
+        alert('Error: ' + e.message);
       }
     }
 
@@ -835,7 +874,7 @@
           html += `<tr>
             <td style="color:var(--text-muted);">#${d.DeploymentId}</td>
             <td style="font-weight:600;">${d.EnvironmentName || 'N/A'}</td>
-            <td>${d.RequestedBy == 3 ? 'Cloud Administrator' : (d.RequestedBy == 1 ? 'Developer' : d.RequestedBy)}</td>
+            <td>${d.RequestedBy}</td>
             <td><span class="badge ${statClass}">${d.Status}</span></td>
             <td class="event-time">${timeAgo(d.StartedAt)}</td>
           </tr>`;
