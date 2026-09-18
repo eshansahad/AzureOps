@@ -21,7 +21,6 @@ const { getPool } = require('./db');
 const app = express();
 const port = process.env.PORT || 8080;
 
-// Body parser for JSON payloads (required for POST /api/deployments)
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -32,6 +31,7 @@ const remediateRouter = require('./routes/remediate');
 const eventsRouter = require('./routes/events');
 const metricsRouter = require('./routes/metrics');
 const alertsRouter = require('./routes/alerts');
+const environmentsRouter = require('./routes/environments'); // GET/POST/decommission
 
 app.use(deploymentsRouter);
 app.use(incidentsRouter);
@@ -39,6 +39,7 @@ app.use(remediateRouter);
 app.use(eventsRouter);
 app.use(metricsRouter);
 app.use(alertsRouter);
+app.use(environmentsRouter);
 
 app.get('/health', (req, res) => {
   res.status(200).json({
@@ -75,18 +76,10 @@ app.get('/api/users', async (req, res) => {
   }
 });
 
-app.get('/api/environments', async (req, res) => {
-  try {
-    const pool = await getPool();
-    const result = await pool.request().query(
-      'SELECT EnvironmentId, Name, EnvironmentType, Status, CreatedAt FROM Environments ORDER BY EnvironmentId'
-    );
-    res.status(200).json(result.recordset);
-  } catch (err) {
-    console.error('Database query failed:', err.message);
-    res.status(500).json({ error: 'Unable to reach the database', detail: err.message });
-  }
-});
+// NOTE: the old inline app.get('/api/environments', ...) route has been
+// removed — environments.js (mounted above) now owns GET/POST/decommission
+// for /api/environments so create and decommission actions have somewhere
+// to live alongside the read path.
 
 app.listen(port, () => {
   console.log(`AzureOps Portal listening on port ${port}`);

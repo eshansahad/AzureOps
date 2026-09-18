@@ -10,7 +10,8 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "@azure/identity": "^4.13.2",
+    "@azure/eventgrid": "^5.12.0",
+    "@azure/identity": "^4.13.3",
     "@azure/service-bus": "^7.9.5",
     "applicationinsights": "^2.9.5",
     "express": "^4.19.2",

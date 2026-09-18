@@ -1,491 +1,510 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AzureOps Portal</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<style>
-  :root {
-    /* Professional IT/Cloud SaaS Theme - Dark Mode */
-    --bg-main: #0f172a;        /* Slate 900 */
-    --bg-header: #020617;      /* Slate 950 */
-    --bg-panel: #1e293b;       /* Slate 800 */
-    
-    --text-main: #f8fafc;      /* Slate 50 */
-    --text-muted: #94a3b8;     /* Slate 400 */
-    --text-light: #ffffff;     /* White */
-    
-    --border: #334155;         /* Slate 700 */
-    --border-dark: #0f172a;    /* Slate 900 */
-    
-    --accent: #3b82f6;         /* Blue 500 */
-    --accent-hover: #60a5fa;   /* Blue 400 */
-    --accent-light: rgba(59, 130, 246, 0.1); /* Blue 500 transparent */
-    
-    /* Semantic Colors */
-    --success: #10b981;
-    --success-bg: rgba(16, 185, 129, 0.1);
-    --warning: #f59e0b;
-    --warning-bg: rgba(245, 158, 11, 0.1);
-    --danger: #ef4444;
-    --danger-bg: rgba(239, 68, 68, 0.1);
-    
-    /* Modern Shadows */
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.6), 0 2px 4px -1px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -2px rgba(0, 0, 0, 0.4);
-  }
-  
-  * { box-sizing: border-box; }
-  
-  body {
-    margin: 0;
-    font-family: 'Inter', -apple-system, sans-serif;
-    background-color: var(--bg-main);
-    color: var(--text-main);
-    line-height: 1.5;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AzureOps Portal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+  <style>
+    :root {
+      /* Professional IT/Cloud SaaS Theme */
+      --bg-main: #f8fafc;
+      --bg-header: #0f172a;
+      --bg-panel: #ffffff;
 
-  header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 16px 40px;
-    background: var(--bg-header);
-    border-bottom: 1px solid var(--border-dark);
-    box-shadow: var(--shadow-sm);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-light: #f8fafc;
 
-  .brand {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--text-light);
-    letter-spacing: -0.025em;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
+      --border: #e2e8f0;
+      --border-dark: #1e293b;
 
-  .brand .mark {
-    width: 32px;
-    height: 32px;
-    border-radius: 6px;
-    background: var(--accent);
-    color: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
-  }
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --accent-light: #eff6ff;
 
-  .role-container {
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    padding: 16px 24px;
-    border-radius: 8px;
-    margin-bottom: 24px;
-    box-shadow: var(--shadow-sm);
-    display: flex;
-    align-items: center;
-    gap: 16px;
-  }
+      --success: #10b981;
+      --success-bg: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-bg: #fffbeb;
+      --danger: #ef4444;
+      --danger-bg: #fef2f2;
 
-  .role-container label {
-    font-size: 14px;
-    color: var(--text-muted);
-    font-weight: 500;
-  }
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    }
 
-  .role-container select {
-    background: var(--bg-main);
-    color: var(--text-main);
-    border: 1px solid var(--border);
-    padding: 8px 12px;
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 14px;
-    outline: none;
-    transition: all 0.2s;
-  }
-  
-  .role-container select option {
-    background: var(--bg-panel);
-    color: var(--text-main);
-  }
+    * { box-sizing: border-box; }
 
-  select, input[type="text"] {
-    background: var(--bg-panel);
-    color: var(--text-main);
-    border: 1px solid var(--border);
-    padding: 10px 14px;
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 14px;
-    outline: none;
-    transition: all 0.2s;
-  }
-  
-  select:focus, input[type="text"]:focus, .role-container select:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-  }
+    body {
+      margin: 0;
+      font-family: 'Inter', -apple-system, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
 
-  main {
-    max-width: 1100px;
-    margin: 40px auto;
-    width: 100%;
-    padding: 0 24px;
-    flex: 1;
-  }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 40px;
+      background: var(--bg-header);
+      border-bottom: 1px solid var(--border-dark);
+      box-shadow: var(--shadow-sm);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
 
-  .section {
-    display: none;
-    animation: fadeIn 0.2s ease-out;
-  }
-  
-  .section.active {
-    display: block;
-  }
+    .brand {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-light);
+      letter-spacing: -0.025em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(5px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+    .brand .mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background: var(--accent);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      box-shadow: 0 0 10px rgba(37, 99, 235, 0.5);
+    }
 
-  h2 {
-    font-size: 20px;
-    font-weight: 600;
-    margin: 0 0 24px;
-    color: var(--text-main);
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 12px;
-    letter-spacing: -0.01em;
-  }
+    .role-selector {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
 
-  .nav-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 24px;
-  }
+    .role-selector label {
+      font-size: 13px;
+      color: #94a3b8;
+      font-weight: 500;
+    }
 
-  .back-btn {
-    background: #ffffff;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.2s;
-    box-shadow: var(--shadow-sm);
-  }
+    header select {
+      background: #1e293b;
+      color: #f8fafc;
+      border: 1px solid #334155;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 13px;
+      outline: none;
+      transition: all 0.2s;
+    }
 
-  .back-btn:hover {
-    background: var(--bg-main);
-    color: var(--text-main);
-    border-color: #cbd5e1;
-  }
+    header select option {
+      background: var(--bg-panel);
+      color: var(--text-main);
+    }
 
-  /* Action Cards */
-  .action-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 24px;
-    margin-bottom: 48px;
-  }
+    select, input[type="text"] {
+      background: var(--bg-panel);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 10px 14px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.2s;
+    }
 
-  .action-card {
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 32px 24px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: var(--shadow-sm);
-    display: none;
-  }
+    select:focus,
+    input[type="text"]:focus,
+    header select:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+    }
 
-  .action-card.visible {
-    display: block;
-  }
+    main {
+      max-width: 1100px;
+      margin: 40px auto;
+      width: 100%;
+      padding: 0 24px;
+      flex: 1;
+    }
 
-  .action-card:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md);
-    border-color: #cbd5e1;
-  }
+    .section {
+      display: none;
+      animation: fadeIn 0.2s ease-out;
+    }
 
-  .action-card h3 {
-    margin: 0 0 8px;
-    font-size: 18px;
-    font-weight: 600;
-    color: var(--accent);
-  }
-  
-  .action-card p {
-    margin: 0;
-    color: var(--text-muted);
-    font-size: 14px;
-  }
+    .section.active {
+      display: block;
+    }
 
-  /* Overview Grid */
-  .grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 16px;
-    margin-bottom: 48px;
-  }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-  .card {
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    padding: 24px;
-    border-radius: 8px;
-    box-shadow: var(--shadow-sm);
-  }
+    h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin: 0 0 24px;
+      color: var(--text-main);
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+      letter-spacing: -0.01em;
+    }
 
-  .card .label {
-    color: var(--text-muted);
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    margin-bottom: 8px;
-  }
+    .nav-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 24px;
+    }
 
-  .card .value {
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--text-main);
-  }
-  
-  .card .value.ok { color: var(--success); }
+    .back-btn {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s;
+      box-shadow: var(--shadow-sm);
+    }
 
-  /* Services List */
-  .services-list {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 12px;
-    list-style: none;
-    padding: 0;
-    margin: 0 0 48px;
-  }
+    .back-btn:hover {
+      background: var(--bg-main);
+      color: var(--text-main);
+      border-color: #cbd5e1;
+    }
 
-  .services-list li {
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    padding: 14px 16px;
-    border-radius: 8px;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    box-shadow: var(--shadow-sm);
-    font-weight: 500;
-  }
+    /* Action Cards */
+    .action-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 48px;
+    }
 
-  .services-list li::before {
-    content: "";
-    width: 6px;
-    height: 6px;
-    background: var(--accent);
-    border-radius: 50%;
-  }
+    .action-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 32px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: var(--shadow-sm);
+      display: none;
+    }
 
-  /* Tables */
-  .panel {
-    background: var(--bg-panel);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 24px;
-    margin-bottom: 24px;
-    box-shadow: var(--shadow-sm);
-  }
+    .action-card.visible {
+      display: block;
+    }
 
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-  }
+    .action-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: #cbd5e1;
+    }
 
-  th {
-    text-align: left;
-    color: var(--text-muted);
-    font-weight: 600;
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border);
-    font-size: 13px;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
+    .action-card h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--accent);
+    }
 
-  td {
-    padding: 16px;
-    border-bottom: 1px solid var(--border);
-  }
+    .action-card p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 14px;
+    }
 
-  tr:last-child td { border-bottom: none; }
+    /* Overview Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 48px;
+    }
 
-  .badge {
-    padding: 4px 10px;
-    border-radius: 9999px; /* Pill shape */
-    font-size: 12px;
-    font-weight: 600;
-    display: inline-block;
-  }
-  .badge.success { background: var(--success-bg); color: var(--success); }
-  .badge.warning { background: var(--warning-bg); color: var(--warning); }
-  .badge.danger { background: var(--danger-bg); color: var(--danger); }
-  .badge.info { background: var(--accent-light); color: var(--accent); }
+    .card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: var(--shadow-sm);
+    }
 
-  /* Forms and Buttons */
-  .form-group {
-    display: flex;
-    gap: 16px;
-    align-items: center;
-  }
+    .card .label {
+      color: var(--text-muted);
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
 
-  input[type="text"] {
-    flex: 1;
-  }
+    .card .value {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-main);
+    }
 
-  button.primary {
-    background: var(--accent);
-    color: white;
-    border: 1px solid transparent;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-family: inherit;
-    font-size: 14px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: var(--shadow-sm);
-  }
+    .card .value.ok { color: var(--success); }
 
-  button.primary:hover {
-    background: var(--accent-hover);
-  }
+    /* Services List */
+    .services-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      list-style: none;
+      padding: 0;
+      margin: 0 0 48px;
+    }
 
-  button.outline {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-main);
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 500;
-    transition: all 0.2s;
-  }
+    .services-list li {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      padding: 14px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: var(--shadow-sm);
+      font-weight: 500;
+    }
 
-  button.outline:hover {
-    background: var(--bg-main);
-    border-color: #cbd5e1;
-  }
+    .services-list li::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
 
-  .loading {
-    color: var(--text-muted);
-    font-style: italic;
-    padding: 20px 0;
-    text-align: center;
-  }
+    /* Tables */
+    .panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: var(--shadow-sm);
+    }
 
-  .toast {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    background: var(--bg-header);
-    color: white;
-    padding: 16px 24px;
-    border-radius: 8px;
-    font-weight: 500;
-    transform: translateY(100px);
-    opacity: 0;
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    box-shadow: var(--shadow-lg);
-    z-index: 1000;
-  }
-  
-  .toast.show {
-    transform: translateY(0);
-    opacity: 1;
-  }
+    .panel h3 {
+      margin-top: 0;
+      font-size: 16px;
+    }
 
-  /* Dashboard additions */
-  .live-dot {
-    display: inline-block;
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    background: var(--success);
-    margin-left: 8px;
-    animation: pulse 1.5s infinite;
-    vertical-align: middle;
-  }
+    .text-muted { color: var(--text-muted); }
 
-  @keyframes pulse {
-    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
-    70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
-    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
-  }
+    .btn-danger {
+      color: var(--danger);
+      background: none;
+      border: 1px solid var(--danger);
+      padding: 4px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
 
-  .event-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 14px;
-  }
+    .btn-danger:hover {
+      background: var(--danger-bg);
+    }
 
-  .event-row:last-child { border-bottom: none; }
+    .btn-sm { font-size: 12px; padding: 4px 8px; }
 
-  .event-type {
-    font-weight: 600;
-    color: var(--text-main);
-  }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
 
-  .event-subject {
-    color: var(--text-muted);
-    font-size: 13px;
-  }
+    th {
+      text-align: left;
+      color: var(--text-muted);
+      font-weight: 600;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
 
-  .event-time {
-    color: var(--text-muted);
-    font-size: 12px;
-    white-space: nowrap;
-  }
+    td {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
 
-  .chart-wrap {
-    position: relative;
-    height: 220px;
-  }
+    tr:last-child td { border-bottom: none; }
 
-  .row-new {
-    animation: rowFlash 1.5s ease-out;
-  }
+    .badge {
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-block;
+    }
 
-  @keyframes rowFlash {
-    from { background-color: var(--accent-light); }
-    to { background-color: transparent; }
-  }
-</style>
+    .badge.success { background: var(--success-bg); color: var(--success); }
+    .badge.warning { background: var(--warning-bg); color: var(--warning); }
+    .badge.danger { background: var(--danger-bg); color: var(--danger); }
+    .badge.info { background: var(--accent-light); color: var(--accent); }
+
+    /* Forms and Buttons */
+    .form-group {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    input[type="text"] {
+      flex: 1;
+    }
+
+    button.primary {
+      background: var(--accent);
+      color: white;
+      border: 1px solid transparent;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: var(--shadow-sm);
+    }
+
+    button.primary:hover {
+      background: var(--accent-hover);
+    }
+
+    button.outline {
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.2s;
+    }
+
+    button.outline:hover {
+      background: var(--bg-main);
+      border-color: #cbd5e1;
+    }
+
+    .loading {
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 20px 0;
+      text-align: center;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--bg-header);
+      color: white;
+      padding: 16px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      transform: translateY(100px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: var(--shadow-lg);
+      z-index: 1000;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    /* Dashboard additions */
+    .live-dot {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      margin-left: 8px;
+      animation: pulse 1.5s infinite;
+      vertical-align: middle;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.5); }
+      70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    .event-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .event-row:last-child { border-bottom: none; }
+
+    .event-type {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .event-subject {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .event-time {
+      color: var(--text-muted);
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    .chart-wrap {
+      position: relative;
+      height: 220px;
+    }
+
+    .row-new {
+      animation: rowFlash 1.5s ease-out;
+    }
+
+    @keyframes rowFlash {
+      from { background-color: var(--accent-light); }
+      to { background-color: transparent; }
+    }
+  </style>
 </head>
 <body>
   <header>
@@ -493,10 +512,7 @@
       <div class="mark">A</div>
       AzureOps
     </div>
-  </header>
-
-  <main>
-    <div class="role-container">
+    <div class="role-selector">
       <label>Role / Persona:</label>
       <select id="roleSelect" onchange="handleRoleChange()">
         <option value="CloudAdministrator" selected>Cloud Administrator</option>
@@ -504,15 +520,13 @@
         <option value="Developer">Developer</option>
       </select>
     </div>
+  </header>
 
+  <main>
     <!-- Overview Section (Main Index) -->
     <div id="overview" class="section active">
-      
+
       <div class="action-grid">
-        <div class="action-card visible" id="card-users" onclick="document.getElementById('usersContainer').scrollIntoView({behavior: 'smooth', block: 'center'})">
-          <h3>User Management</h3>
-          <p>System overview and user administration</p>
-        </div>
         <div class="action-card visible" id="card-deployments" onclick="navigateTo('deployments')">
           <h3>Request Deployment</h3>
           <p>Deploy applications to specific environments</p>
@@ -571,9 +585,9 @@
         <button class="back-btn" onclick="navigateTo('overview')">← Back to Overview</button>
       </div>
       <h2>Environments & Deployments</h2>
-      
+
       <div class="panel">
-        <h3 style="margin-top:0; font-size:16px;">Request Deployment</h3>
+        <h3>Request Deployment</h3>
         <div class="form-group">
           <select id="deployEnvSelect">
             <option value="">Select Environment...</option>
@@ -584,12 +598,28 @@
       </div>
 
       <div class="panel">
-        <h3 style="margin-top:0; font-size:16px;">Recent Deployments</h3>
+        <h3>Recent Deployments</h3>
         <div id="deploymentsContainer" class="loading">Loading deployments...</div>
       </div>
 
+      <div class="panel" id="adminEnvControls" style="display:none;">
+        <h3>Manage Environments</h3>
+        <div class="form-group">
+          <input type="text" id="newEnvName" placeholder="Environment name (e.g. 'Staging')" />
+          <select id="newEnvType">
+            <option value="Dev">Development</option>
+            <option value="Staging">Staging</option>
+            <option value="Prod">Production</option>
+          </select>
+          <button class="primary" onclick="createEnvironment()">Create</button>
+        </div>
+        <p class="text-muted" style="font-size:13px; margin:12px 0 0;">
+          Decommissioning retires an environment (soft delete) — its deployment and incident history is preserved, it just stops appearing as a deploy target.
+        </p>
+      </div>
+
       <div class="panel">
-        <h3 style="margin-top:0; font-size:16px;">Available Environments</h3>
+        <h3>Available Environments</h3>
         <div id="envsContainer" class="loading">Loading environments...</div>
       </div>
     </div>
@@ -613,19 +643,19 @@
       <h2>Live Dashboard</h2>
 
       <div class="panel">
-        <h3 style="margin-top:0; font-size:16px;">Request Volume (last hour) — Azure Monitor</h3>
+        <h3>Request Volume (last hour) — Azure Monitor</h3>
         <div class="chart-wrap">
           <canvas id="metricsChart"></canvas>
         </div>
       </div>
 
       <div class="panel">
-        <h3 style="margin-top:0; font-size:16px;">Active Azure Monitor Alerts</h3>
+        <h3>Active Azure Monitor Alerts</h3>
         <div id="alertsContainer" class="loading">Loading alerts...</div>
       </div>
 
       <div class="panel">
-        <h3 style="margin-top:0; font-size:16px;">Live Platform Events<span class="live-dot"></span></h3>
+        <h3>Live Platform Events<span class="live-dot"></span></h3>
         <div id="eventsContainer" class="loading">Loading events...</div>
       </div>
     </div>
@@ -658,27 +688,28 @@
 
     function handleRoleChange() {
       activeRole = document.getElementById('roleSelect').value;
-      
+
       const cardDeploy = document.getElementById('card-deployments');
       const cardIncidents = document.getElementById('card-incidents');
-      const cardUsers = document.getElementById('card-users');
+      const adminEnvControls = document.getElementById('adminEnvControls');
       // Dashboard is read-only observability — visible to every persona.
+      // Environment create/decommission is admin-only — infra lifecycle,
+      // not a deployment action a Developer or DevOps Engineer should trigger.
+      adminEnvControls.style.display = activeRole === 'CloudAdministrator' ? 'block' : 'none';
 
       if (activeRole === 'Developer') {
         cardDeploy.classList.add('visible');
         cardIncidents.classList.remove('visible');
-        cardUsers.classList.remove('visible');
         navigateTo('overview');
       } else if (activeRole === 'DevOpsEngineer') {
         cardDeploy.classList.remove('visible');
         cardIncidents.classList.add('visible');
-        cardUsers.classList.remove('visible');
         navigateTo('overview');
       } else { // CloudAdministrator
         cardDeploy.classList.add('visible');
         cardIncidents.classList.add('visible');
-        cardUsers.classList.add('visible');
       }
+      fetchEnvironments();
     }
 
     function navigateTo(sectionId) {
@@ -708,19 +739,18 @@
         const res = await fetch('/api/users');
         const users = await res.json();
         const container = document.getElementById('usersContainer');
-        
+
         if (!users.length) {
           container.innerHTML = '<p class="loading">No users found.</p>';
           return;
         }
 
-        let html = `<table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Action</th></tr></thead><tbody>`;
+        let html = `<table><thead><tr><th>Name</th><th>Email</th><th>Role</th></tr></thead><tbody>`;
         users.forEach(u => {
           html += `<tr>
             <td style="font-weight:500;">${u.DisplayName}</td>
             <td style="color:var(--text-muted);">${u.Email}</td>
             <td><span class="badge info">${u.Role}</span></td>
-            <td><button class="outline" onclick="window.location.href='user.html?id=${u.UserId}'">View Details</button></td>
           </tr>`;
         });
         html += '</tbody></table>';
@@ -731,44 +761,100 @@
     }
 
     async function fetchEnvironments() {
+      const res = await fetch('/api/environments');
+      const envs = await res.json();
+
+      // 1. Populate Dropdown (Active only)
+      const dropdown = document.getElementById('environmentSelect');
+      dropdown.innerHTML = '<option value="">Select Environment...</option>';
+      envs.filter(e => e.Status === 'Active').forEach(e => {
+        dropdown.innerHTML += `<option value="${e.EnvironmentId}">${e.Name} (${e.EnvironmentType})</option>`;
+      });
+
+      // 2. Render Table with Decommission logic
+      const container = document.getElementById('environmentsContainer');
+      let html = `<table><thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody>`;
+
+      envs.forEach(e => {
+        const statClass = e.Status === 'Active' ? 'success' : 'warning';
+        // Only show decommission button to Cloud Administrator on Active rows
+        const actionBtn = (activeRole === 'Cloud Administrator' && e.Status === 'Active')
+          ? `<button onclick="decommissionEnvironment(${e.EnvironmentId})" class="btn-danger btn-sm">Decommission</button>`
+          : `<span class="text-muted">-</span>`;
+
+        html += `<tr>
+          <td>#${e.EnvironmentId}</td>
+          <td>${e.Name}</td>
+          <td>${e.EnvironmentType}</td>
+          <td><span class="badge ${statClass}">${e.Status}</span></td>
+          <td>${actionBtn}</td>
+        </tr>`;
+      });
+      container.innerHTML = html + `</tbody></table>`;
+    }
+
+    async function decommissionEnvironment(id) {
+      if (!confirm('Are you sure you want to decommission this environment?')) return;
+
+      const res = await fetch(`/api/environments/${id}/decommission`, { method: 'PUT' });
+      if (res.ok) {
+        fetchEnvironments(); // Refresh table
+      } else {
+        alert('Failed to decommission environment');
+      }
+    }
+
+    async function createEnvironment() {
+      const name = document.getElementById('newEnvName').value.trim();
+      const environmentType = document.getElementById('newEnvType').value;
+      if (!name) return alert('Please enter an environment name');
+
       try {
-        const res = await fetch('/api/environments');
-        const environments = await res.json();
-        const container = document.getElementById('envsContainer');
-        const select = document.getElementById('deployEnvSelect');
-        
-        if (!environments.length) {
-          container.innerHTML = '<p class="loading">No environments found.</p>';
-          return;
-        }
-
-        let html = `<table><thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Status</th></tr></thead><tbody>`;
-        select.innerHTML = '<option value="">Select Environment...</option>';
-
-        environments.forEach(e => {
-          html += `<tr>
-            <td style="color:var(--text-muted);">#${e.EnvironmentId}</td>
-            <td style="font-weight:600;">${e.Name}</td>
-            <td><span class="badge info">${e.EnvironmentType}</span></td>
-            <td><span class="badge success">${e.Status}</span></td>
-          </tr>`;
-          select.innerHTML += `<option value="${e.EnvironmentId}">${e.Name} (${e.EnvironmentType})</option>`;
+        const res = await fetch('/api/environments', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, environmentType })
         });
-        html += '</tbody></table>';
-        container.innerHTML = html;
+
+        if (res.ok) {
+          showToast(`Environment "${name}" created`);
+          document.getElementById('newEnvName').value = '';
+          fetchEnvironments();
+          setTimeout(fetchEvents, 4000);
+        } else {
+          alert('Failed to create environment');
+        }
       } catch (e) {
-        document.getElementById('envsContainer').innerHTML = `<p style="color:var(--danger)">Failed to load environments</p>`;
+        alert('Error: ' + e.message);
+      }
+    }
+
+    async function decommissionEnvironment(id, name) {
+      if (!confirm(`Decommission "${name}"? It will stop appearing as a deploy target. Its deployment and incident history is kept.`)) return;
+
+      try {
+        const res = await fetch(`/api/environments/${id}/decommission`, { method: 'POST' });
+
+        if (res.ok) {
+          showToast(`Environment "${name}" decommissioned`);
+          fetchEnvironments();
+          setTimeout(fetchEvents, 4000);
+        } else {
+          alert('Failed to decommission environment');
+        }
+      } catch (e) {
+        alert('Error: ' + e.message);
       }
     }
 
     async function fetchIncidents() {
       if (activeRole === 'Developer') return;
-      
+
       try {
         const res = await fetch('/api/incidents');
         const incidents = await res.json();
         const container = document.getElementById('incidentsContainer');
-        
+
         if (!incidents.length) {
           container.innerHTML = '<p class="loading">No active incidents. System is healthy.</p>';
           return;
@@ -778,13 +864,13 @@
         incidents.forEach(i => {
           let sevClass = i.Severity === 'High' || i.Severity === 'Critical' ? 'danger' : 'warning';
           let statClass = i.Status === 'Resolved' ? 'success' : 'warning';
-          let actionCell = i.Status !== 'Resolved' 
+          let actionCell = i.Status !== 'Resolved'
             ? `<button class="outline" onclick="remediateIncident(${i.IncidentId})">Remediate</button>`
-            : `<span style="color:var(--text-muted); font-size:13px; font-weight:500;">Resolved</span>`;
+            : `<span class="text-muted" style="font-size:13px; font-weight:500;">Resolved</span>`;
 
           html += `<tr>
             <td style="color:var(--text-muted);">#${i.IncidentId}</td>
-            <td style="font-weight:500;">${i.Description} <br/><small style="color:var(--text-muted); font-weight:normal;">Env: ${i.EnvironmentName || 'N/A'}</small></td>
+            <td style="font-weight:500;">${i.Description} <br/><small class="text-muted" style="font-weight:normal;">Env: ${i.EnvironmentName || 'N/A'}</small></td>
             <td><span class="badge ${sevClass}">${i.Severity}</span></td>
             <td><span class="badge ${statClass}">${i.Status}</span></td>
             <td>${actionCell}</td>
@@ -814,7 +900,7 @@
           html += `<tr>
             <td style="color:var(--text-muted);">#${d.DeploymentId}</td>
             <td style="font-weight:600;">${d.EnvironmentName || 'N/A'}</td>
-            <td>${d.RequestedBy == 3 ? 'Cloud Administrator' : (d.RequestedBy == 1 ? 'Developer' : d.RequestedBy)}</td>
+            <td>${d.RequestedBy}</td>
             <td><span class="badge ${statClass}">${d.Status}</span></td>
             <td class="event-time">${timeAgo(d.StartedAt)}</td>
           </tr>`;

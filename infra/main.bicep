@@ -175,6 +175,15 @@ module monitoringAccess 'modules/monitoringaccess.bicep' = {
   }
 }
 
+module appServiceEventGridAccess './modules/eventgridappaccess.bicep' = {
+  name: 'appServiceEventGridAccess'
+  scope: rg 
+  params: {
+    eventGridTopicName: 'eg-azureops-dev'
+    appServicePrincipalId: appService.outputs.appServicePrincipalId // <-- Updated to match the existing output
+  }
+}
+
 output resourceGroupName string = rg.name
 output keyVaultName string = keyVault.outputs.keyVaultName
 output sqlServerFqdn string = sql.outputs.sqlServerFqdn
