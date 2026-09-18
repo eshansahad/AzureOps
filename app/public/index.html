@@ -813,7 +813,7 @@
           html += `<tr>
             <td style="color:var(--text-muted);">#${d.DeploymentId}</td>
             <td style="font-weight:600;">${d.EnvironmentName || 'N/A'}</td>
-            <td>${d.RequestedBy}</td>
+            <td>${d.RequestedBy === 3 ? 'Cloud Administrator' : (d.RequestedBy === 1 ? 'Developer' : d.RequestedBy)}</td>
             <td><span class="badge ${statClass}">${d.Status}</span></td>
             <td class="event-time">${timeAgo(d.StartedAt)}</td>
           </tr>`;
