@@ -731,41 +731,45 @@
     }
 
     async function fetchEnvironments() {
-      const res = await fetch('/api/environments');
-      const envs = await res.json();
-      
-      // 1. Populate Dropdown (Active only)
-      const dropdown = document.getElementById('environmentSelect');
-      if (dropdown) {
-        dropdown.innerHTML = '<option value="">Select Environment...</option>';
-        envs.filter(e => e.Status === 'Active').forEach(e => {
-          dropdown.innerHTML += `<option value="${e.EnvironmentId}">${e.Name} (${e.EnvironmentType})</option>`;
-        });
+      try {
+          const res = await fetch('/api/environments');
+          const envs = await res.json();
+          
+          // 1. Populate Dropdown (Active only) - fixed ID to match deployEnvSelect
+          const dropdown = document.getElementById('deployEnvSelect');
+          if (dropdown) {
+              dropdown.innerHTML = '<option value="">Select Environment...</option>';
+              envs.filter(e => e.Status === 'Active').forEach(e => {
+                  dropdown.innerHTML += `<option value="${e.EnvironmentId}">${e.Name} (${e.EnvironmentType})</option>`;
+              });
+          }
+
+          // 2. Render Table with Decommission logic - fixed ID to match envsContainer
+          const container = document.getElementById('envsContainer');
+          if (!container) return;
+          
+          let html = `<table><thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody>`;
+          
+          envs.forEach(e => {
+              const statClass = e.Status === 'Active' ? 'success' : 'warning';
+              // Only show decommission button to Cloud Administrator on Active rows
+              const actionBtn = (activeRole === 'Cloud Administrator' && e.Status === 'Active') 
+                  ? `<button onclick="decommissionEnvironment(${e.EnvironmentId})" style="background:var(--danger);color:white;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;">Decommission</button>` 
+                  : `<span style="color:var(--text-muted)">-</span>`;
+
+              html += `<tr>
+                  <td style="color:var(--text-muted)">#${e.EnvironmentId}</td>
+                  <td style="font-weight:600">${e.Name}</td>
+                  <td>${e.EnvironmentType}</td>
+                  <td><span class="badge ${statClass}">${e.Status}</span></td>
+                  <td>${actionBtn}</td>
+              </tr>`;
+          });
+          container.innerHTML = html + `</tbody></table>`;
+      } catch (e) {
+          console.error('Failed to load environments', e);
       }
-
-      // 2. Render Table with Decommission logic
-      const container = document.getElementById('environmentsContainer');
-      if (!container) return;
-      
-      let html = `<table><thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody>`;
-      
-      envs.forEach(e => {
-        const statClass = e.Status === 'Active' ? 'success' : 'warning';
-        // Only show decommission button to Cloud Administrator on Active rows
-        const actionBtn = (activeRole === 'Cloud Administrator' && e.Status === 'Active') 
-          ? `<button onclick="decommissionEnvironment(${e.EnvironmentId})" style="background:var(--danger);color:white;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;">Decommission</button>` 
-          : `<span style="color:var(--text-muted)">-</span>`;
-
-        html += `<tr>
-          <td style="color:var(--text-muted)">#${e.EnvironmentId}</td>
-          <td style="font-weight:600">${e.Name}</td>
-          <td>${e.EnvironmentType}</td>
-          <td><span class="badge ${statClass}">${e.Status}</span></td>
-          <td>${actionBtn}</td>
-        </tr>`;
-      });
-      container.innerHTML = html + `</tbody></table>`;
-    }
+  }
 
     async function decommissionEnvironment(id) {
       if(!confirm('Are you sure you want to decommission this environment?')) return;
