@@ -184,6 +184,14 @@ module appServiceEventGridAccess './modules/eventgridappaccess.bicep' = {
   }
 }
 
+module loadtesting 'modules/loadtesting.bicep' = {
+  name: 'deploy-loadtesting'
+  scope: rg
+  params: {
+    location: location
+  }
+}
+
 output resourceGroupName string = rg.name
 output keyVaultName string = keyVault.outputs.keyVaultName
 output sqlServerFqdn string = sql.outputs.sqlServerFqdn
