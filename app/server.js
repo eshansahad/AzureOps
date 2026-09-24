@@ -14,6 +14,8 @@ if (process.env.APPLICATIONINSIGHTS_CONNECTION_STRING) {
     .start();
 }
 
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const express = require('express');
 const path = require('path');
 const { getPool } = require('./db');
@@ -23,6 +25,15 @@ const port = process.env.PORT || 8080;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
+
+const limiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute window
+  max: 100, // Limit each IP to 100 requests per window
+  message: { error: "Too many requests, please try again later." }
+});
+
+app.use(limiter);
+app.use(helmet());
 
 // Mount routes
 const deploymentsRouter = require('./routes/deployments');
