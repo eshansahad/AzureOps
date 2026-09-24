@@ -28,14 +28,15 @@ app.serviceBusQueue('processDeployment', {
         try {
             const pool = await getPool();
             const result = await pool.request()
+                .input('Description', sql.NVarChar(255), description)
                 .input('EnvironmentId', sql.Int, environmentId)
                 .input('AppName', sql.NVarChar(100), appName)
                 .input('Status', sql.NVarChar(50), 'Completed')
                 .input('RequestedBy', sql.NVarChar(100), requestedBy)
                 .query(`
-                    INSERT INTO dbo.Deployments (EnvironmentId, AppName, Status, RequestedBy, StartedAt, CompletedAt)
+                    INSERT INTO dbo.Deployments (EnvironmentId, AppName, Status, RequestedBy, Description, StartedAt, CompletedAt)
                     OUTPUT INSERTED.DeploymentId
-                    VALUES (@EnvironmentId, @AppName, @Status, @RequestedBy, SYSUTCDATETIME(), SYSUTCDATETIME())
+                    VALUES (@EnvironmentId, @AppName, @Status, @RequestedBy, @Description, SYSUTCDATETIME(), SYSUTCDATETIME())
                 `);
 
             const deploymentId = result.recordset[0].DeploymentId;
