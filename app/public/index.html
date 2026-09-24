@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script type="text/javascript">
 !(function (cfg){function e(){cfg.onInit&&cfg.onInit(n)}var x,w,D,t,E,n,C=window,O=document,b=C.location,q="script",I="ingestionendpoint",L="disableExceptionTracking",j="ai.device.";"instrumentationKey"[x="toLowerCase"](),w="crossOrigin",D="POST",t="appInsightsSDK",E=cfg.name||"appInsights",(cfg.name||C[t])&&(C[t]=E),n=C[E]||function(g){var f=!1,m=!1,h={initialize:!0,queue:[],sv:"8",version:2,config:g};function v(e,t){var n={},i="Browser";function a(e){e=""+e;return 1===e.length?"0"+e:e}return n[j+"id"]=i[x](),n[j+"type"]=i,n["ai.operation.name"]=b&&b.pathname||"_unknown_",n["ai.internal.sdkVersion"]="javascript:snippet_"+(h.sv||h.version),{time:(i=new Date).getUTCFullYear()+"-"+a(1+i.getUTCMonth())+"-"+a(i.getUTCDate())+"T"+a(i.getUTCHours())+":"+a(i.getUTCMinutes())+":"+a(i.getUTCSeconds())+"."+(i.getUTCMilliseconds()/1e3).toFixed(3).slice(2,5)+"Z",iKey:e,name:"Microsoft.ApplicationInsights."+e.replace(/-/g,"")+"."+t,sampleRate:100,tags:n,data:{baseData:{ver:2}},ver:undefined,seq:"1",aiDataContract:undefined}}var n,i,t,a,y=-1,T=0,S=["js.monitor.azure.com","js.cdn.applicationinsights.io","js.cdn.monitor.azure.com","js0.cdn.applicationinsights.io","js0.cdn.monitor.azure.com","js2.cdn.applicationinsights.io","js2.cdn.monitor.azure.com","az416426.vo.msecnd.net"],o=g.url||cfg.src,r=function(){return s(o,null)};function s(d,t){if((n=navigator)&&(~(n=(n.userAgent||"").toLowerCase()).indexOf("msie")||~n.indexOf("trident/"))&&~d.indexOf("ai.3")&&(d=d.replace(/(\/)(ai\.3\.)([^\d]*)$/,function(e,t,n){return t+"ai.2"+n})),!1!==cfg.cr)for(var e=0;e<S.length;e++)if(0<d.indexOf(S[e])){y=e;break}var n,i=function(e){var a,t,n,i,o,r,s,c,u,l;h.queue=[],m||(0<=y&&T+1<S.length?(a=(y+T+1)%S.length,p(d.replace(/^(.*\/\/)([\w\.]*)(\/.*)$/,function(e,t,n,i){return t+S[a]+i})),T+=1):(f=m=!0,s=d,!0!==cfg.dle&&(c=(t=function(){var e,t={},n=g.connectionString;if(n)for(var i=n.split(";"),a=0;a<i.length;a++){var o=i[a].split("=");2===o.length&&(t[o[0][x]()]=o[1])}return t[I]||(e=(n=t.endpointsuffix)?t.location:null,t[I]="https://"+(e?e+".":"")+"dc."+(n||"services.visualstudio.com")),t}()).instrumentationkey||g.instrumentationKey||"",t=(t=(t=t[I])&&"/"===t.slice(-1)?t.slice(0,-1):t)?t+"/v2/track":g.endpointUrl,t=g.userOverrideEndpointUrl||t,(n=[]).push((i="SDK LOAD Failure: Failed to load Application Insights SDK script (See stack for details)",o=s,u=t,(l=(r=v(c,"Exception")).data).baseType="ExceptionData",l.baseData.exceptions=[{typeName:"SDKLoadFailed",message:i.replace(/\./g,"-"),hasFullStack:!1,stack:i+"\nSnippet failed to load ["+o+"] -- Telemetry is disabled\nHelp Link: https://go.microsoft.com/fwlink/?linkid=2128109\nHost: "+(b&&b.pathname||"_unknown_")+"\nEndpoint: "+u,parsedStack:[]}],r)),n.push((l=s,i=t,(u=(o=v(c,"Message")).data).baseType="MessageData",(r=u.baseData).message='AI (Internal): 99 message:"'+("SDK LOAD Failure: Failed to load Application Insights SDK script (See stack for details) ("+l+")").replace(/\"/g,"")+'"',r.properties={endpoint:i},o)),s=n,c=t,JSON&&((u=C.fetch)&&!cfg.useXhr?u(c,{method:D,body:JSON.stringify(s),mode:"cors"}):XMLHttpRequest&&((l=new XMLHttpRequest).open(D,c),l.setRequestHeader("Content-type","application/json"),l.send(JSON.stringify(s)))))))},a=function(e,t){m||setTimeout(function(){!t&&h.core||i()},500),f=!1},p=function(e){var n=O.createElement(q),e=(n.src=e,t&&(n.integrity=t),n.setAttribute("data-ai-name",E),cfg[w]);return!e&&""!==e||"undefined"==n[w]||(n[w]=e),n.onload=a,n.onerror=i,n.onreadystatechange=function(e,t){"loaded"!==n.readyState&&"complete"!==n.readyState||a(0,t)},cfg.ld&&cfg.ld<0?O.getElementsByTagName("head")[0].appendChild(n):setTimeout(function(){O.getElementsByTagName(q)[0].parentNode.appendChild(n)},cfg.ld||0),n};p(d)}cfg.sri&&(n=o.match(/^((http[s]?:\/\/.*\/)\w+(\.\d+){1,5})\.(([\w]+\.){0,2}js)$/))&&6===n.length?(d="".concat(n[1],".integrity.json"),i="@".concat(n[4]),l=window.fetch,t=function(e){if(!e.ext||!e.ext[i]||!e.ext[i].file)throw Error("Error Loading JSON response");var t=e.ext[i].integrity||null;s(o=n[2]+e.ext[i].file,t)},l&&!cfg.useXhr?l(d,{method:"GET",mode:"cors"}).then(function(e){return e.json()["catch"](function(){return{}})}).then(t)["catch"](r):XMLHttpRequest&&((a=new XMLHttpRequest).open("GET",d),a.onreadystatechange=function(){if(a.readyState===XMLHttpRequest.DONE)if(200===a.status)try{t(JSON.parse(a.responseText))}catch(e){r()}else r()},a.send())):o&&r();try{h.cookie=O.cookie}catch(k){}function e(e){for(;e.length;)!function(t){h[t]=function(){var e=arguments;f||h.queue.push(function(){h[t].apply(h,e)})}}(e.pop())}var c,u,l="track",d="TrackPage",p="TrackEvent",l=(e([l+"Event",l+"PageView",l+"Exception",l+"Trace",l+"DependencyData",l+"Metric",l+"PageViewPerformance","start"+d,"stop"+d,"start"+p,"stop"+p,"addTelemetryInitializer","setAuthenticatedUserContext","clearAuthenticatedUserContext","flush"]),h.SeverityLevel={Verbose:0,Information:1,Warning:2,Error:3,Critical:4},(g.extensionConfig||{}).ApplicationInsightsAnalytics||{});return!0!==g[L]&&!0!==l[L]&&(e(["_"+(c="onerror")]),u=C[c],C[c]=function(e,t,n,i,a){var o=u&&u(e,t,n,i,a);return!0!==o&&h["_"+c]({message:e,url:t,lineNumber:n,columnNumber:i,error:a,evt:C.event}),o},g.autoExceptionInstrumented=!0),h}(cfg.cfg),(C[E]=n).queue&&0===n.queue.length?(n.queue.push(e),n.trackPageView({})):e();})({
   src: "https://js.monitor.azure.com/scripts/b/ai.3.gbl.min.js",
@@ -499,6 +500,224 @@
     from { background-color: var(--accent-light); }
     to { background-color: transparent; }
   }
+
+  /* Geometric metrics dashboard */
+  .metrics-grid {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .metric-card {
+    flex: 1;
+    background: #1e293b;
+    border-radius: 4px;
+    padding: 16px;
+    border-left: 4px solid #3b82f6;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+
+  .metric-card:nth-child(1) { border-left-color: #10b981; }
+  .metric-card:nth-child(2) { border-left-color: #8b5cf6; }
+
+  .metric-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .metric-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #94a3b8;
+    text-transform: uppercase;
+  }
+
+  .metric-value {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #f8fafc;
+  }
+
+  .sparkline-container {
+    position: relative;
+    height: 40px;
+    width: 100%;
+  }
+
+  /* Geometric environments card grid */
+  .env-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    margin-top: 16px;
+  }
+
+  .env-card {
+    background: #1e293b;
+    border: 1px solid #334155;
+    border-radius: 2px;
+    padding: 20px;
+    position: relative;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .env-card:hover {
+    transform: translateY(-3px);
+    border-color: #cbd5e1;
+  }
+
+  .env-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 3px;
+    background: #64748b;
+  }
+  .env-card[data-type="Production"]::before { background: #ef4444; }
+  .env-card[data-type="Staging"]::before { background: #f59e0b; }
+  .env-card[data-type="Dev"]::before { background: #10b981; }
+
+  .env-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 16px;
+  }
+
+  .env-name {
+    font-size: 1.1rem;
+    color: #f8fafc;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .env-type-badge {
+    font-size: 0.65rem;
+    padding: 4px 8px;
+    background: #0f172a;
+    color: #94a3b8;
+    border: 1px solid #334155;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .env-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+  .status-dot.active {
+    background: #10b981;
+    box-shadow: 0 0 8px #10b981;
+  }
+  .status-dot.decommissioned {
+    background: #64748b;
+  }
+
+  .env-actions {
+    margin-top: 20px;
+    padding-top: 16px;
+    border-top: 1px dashed #334155;
+    text-align: right;
+  }
+
+  /* Vertical Audit Timeline */
+  .timeline {
+    position: relative;
+    padding-left: 24px;
+    margin-top: 16px;
+    border-left: 2px solid #334155;
+  }
+
+  .timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -31px;
+    top: 6px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #3b82f6;
+    border: 3px solid #0f172a;
+  }
+
+  .timeline-item.completed::before { background: #10b981; }
+  .timeline-item.queued::before { background: #f59e0b; }
+  .timeline-item.failed::before { background: #ef4444; }
+
+  .timeline-content {
+    background: #1e293b;
+    padding: 16px;
+    border-radius: 4px;
+    border: 1px solid #334155;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s ease;
+  }
+
+  .timeline-content:hover {
+    transform: translateX(4px);
+    border-color: #cbd5e1;
+  }
+
+  .timeline-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .timeline-title {
+    color: #f8fafc;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .timeline-desc {
+    color: #94a3b8;
+    font-size: 0.85rem;
+  }
+
+  .timeline-time {
+    font-size: 0.75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-top: 4px;
+  }
+
+  .timeline-status {
+    font-size: 0.75rem;
+    padding: 6px 12px;
+    border-radius: 12px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .status-completed { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+  .status-queued { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+  .status-failed { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
 </style>
 </head>
 <body>
@@ -584,6 +803,28 @@
       <div class="nav-header">
         <button class="back-btn" onclick="navigateTo('overview')">← Back to Overview</button>
       </div>
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">CPU UTILIZATION</span>
+            <span class="metric-value" id="cpuValue">--%</span>
+          </div>
+          <div class="sparkline-container">
+            <canvas id="cpuSparkline"></canvas>
+          </div>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-header">
+            <span class="metric-title">MEMORY USAGE</span>
+            <span class="metric-value" id="memValue">--%</span>
+          </div>
+          <div class="sparkline-container">
+            <canvas id="memSparkline"></canvas>
+          </div>
+        </div>
+      </div>
+
       <h2>Environments & Deployments</h2>
       
       <div class="panel">
@@ -599,7 +840,7 @@
 
       <div class="panel">
         <h3 style="margin-top:0; font-size:16px;">Recent Deployments</h3>
-        <div id="deploymentsContainer" class="loading">Loading deployments...</div>
+        <div id="deploymentsTimeline" class="timeline"></div>
       </div>
 
       <div class="panel" id="adminEnvControls" style="display:none;">
@@ -617,7 +858,7 @@
 
       <div class="panel">
         <h3 style="margin-top:0; font-size:16px;">Available Environments</h3>
-        <div id="envsContainer" class="loading">Loading environments...</div>
+        <div id="environmentsGrid" class="env-grid"></div>
       </div>
     </div>
 
@@ -644,6 +885,11 @@
         <div class="chart-wrap">
           <canvas id="metricsChart"></canvas>
         </div>
+      </div>
+
+      <div style="width: 100%; max-width: 400px; padding: 20px; background: #1e293b; border-radius: 8px;">
+        <h3 style="color: #fff; text-align: center; font-family: sans-serif;">Deployments by Environment</h3>
+          <canvas id="deploymentChart"></canvas>
       </div>
 
       <div class="panel">
@@ -678,6 +924,7 @@
 
       setInterval(fetchIncidents, 10000);
       setInterval(fetchDeployments, 8000);
+      setInterval(fetchEnvironments, 15000);
       setInterval(fetchEvents, 6000);
       setInterval(fetchMetrics, 60000);
       setInterval(fetchAlerts, 30000);
@@ -775,27 +1022,48 @@
           });
         }
 
-        const container = document.getElementById('envsContainer');
-        if (!container) return;
-        
-        let html = `<table><thead><tr><th>ID</th><th>Name</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody>`;
-        
-        envs.forEach(e => {
-          const statClass = e.Status === 'Active' ? 'success' : 'warning';
-          // Fixed role string matching Bug 1 ('CloudAdministrator' without space)
-          const actionBtn = (activeRole === 'CloudAdministrator' && e.Status === 'Active') 
-            ? `<button onclick="decommissionEnvironment(${e.EnvironmentId})" style="background:var(--danger);color:white;border:none;padding:4px 8px;border-radius:4px;cursor:pointer;">Decommission</button>` 
-            : `<span style="color:var(--text-muted)">-</span>`;
+        const grid = document.getElementById('environmentsGrid');
+        if (!grid) return;
 
-          html += `<tr>
-            <td style="color:var(--text-muted)">#${e.EnvironmentId}</td>
-            <td style="font-weight:600">${e.Name}</td>
-            <td>${e.EnvironmentType}</td>
-            <td><span class="badge ${statClass}">${e.Status}</span></td>
-            <td>${actionBtn}</td>
-          </tr>`;
+        grid.innerHTML = '';
+
+        envs.forEach(env => {
+          const isDecom = env.Status === 'Decommissioned';
+          const dotClass = isDecom ? 'decommissioned' : 'active';
+
+          let typeIcon = '■';
+          const envType = env.Type || env.EnvironmentType;
+          if (envType === 'Production') typeIcon = '⬢';
+          if (envType === 'Dev') typeIcon = '▲';
+
+          const actionHtml = isDecom
+            ? `<span style="color: #64748b; font-size: 0.75rem; text-transform: uppercase;">Archived</span>`
+            : (activeRole === 'CloudAdministrator'
+              ? `<button class="btn-danger" onclick="decommissionEnvironment(${env.ID || env.EnvironmentId})">Decommission</button>`
+              : `<span style="color:var(--text-muted)">-</span>`);
+
+          const card = document.createElement('div');
+          card.className = 'env-card';
+          card.setAttribute('data-type', envType);
+
+          card.innerHTML = `
+            <div class="env-header">
+              <div class="env-name">${env.Name}</div>
+              <div class="env-type-badge">
+                <span>${typeIcon}</span> ${envType}
+              </div>
+            </div>
+            <div class="env-status">
+              <div class="status-dot ${dotClass}"></div>
+              <span>${env.Status}</span>
+            </div>
+            <div class="env-actions">
+              ${actionHtml}
+            </div>
+          `;
+
+          grid.appendChild(card);
         });
-        container.innerHTML = html + `</tbody></table>`;
       } catch (e) {
         console.error('Failed to load environments', e);
       }
@@ -877,29 +1145,88 @@
       try {
         const res = await fetch('/api/deployments');
         const deployments = await res.json();
-        const container = document.getElementById('deploymentsContainer');
+        const container = document.getElementById('deploymentsTimeline');
 
-        if (!deployments.length) {
-          container.innerHTML = '<p class="loading">No deployments yet.</p>';
+        container.innerHTML = '';
+
+        if (!deployments || !deployments.length) {
+          container.innerHTML = '<div style="color: #64748b; padding: 20px;">No recent deployment activity.</div>';
           return;
         }
 
-        let html = `<table><thead><tr><th>ID</th><th>Environment</th><th>Requested By</th><th>Status</th><th>Started</th></tr></thead><tbody>`;
         deployments.forEach(d => {
-          const statClass = d.Status === 'Completed' ? 'success' : (d.Status === 'Failed' ? 'danger' : 'warning');
-          html += `<tr>
-            <td style="color:var(--text-muted);">#${d.DeploymentId}</td>
-            <td style="font-weight:600;">${d.EnvironmentName || 'N/A'}</td>
-            <td>${d.RequestedBy == 3 ? 'Cloud Administrator' : (d.RequestedBy == 1 ? 'Developer' : d.RequestedBy)}</td>
-            <td><span class="badge ${statClass}">${d.Status}</span></td>
-            <td class="event-time">${timeAgo(d.StartedAt)}</td>
-          </tr>`;
+          const statusLower = (d.Status || 'queued').toLowerCase();
+          const relativeTime = timeAgo(d.StartedAt);
+          const desc = d.Description || `Deployment initiated by ${d.RequestedBy}`;
+          const envName = d.EnvironmentName || `Env #${d.EnvironmentId}`;
+
+          const item = document.createElement('div');
+          item.className = `timeline-item ${statusLower}`;
+
+          item.innerHTML = `
+            <div class="timeline-content">
+              <div class="timeline-meta">
+                <span class="timeline-title">${d.AppName} <span style="color:#64748b; font-weight:normal;">&rarr;</span> ${envName}</span>
+                <span class="timeline-desc">${desc}</span>
+                <span class="timeline-time">${relativeTime}</span>
+              </div>
+              <div class="timeline-status status-${statusLower}">
+                ${d.Status}
+              </div>
+            </div>
+          `;
+
+          container.appendChild(item);
         });
-        html += '</tbody></table>';
-        container.innerHTML = html;
       } catch (e) {
-        document.getElementById('deploymentsContainer').innerHTML = `<p style="color:var(--danger)">Failed to load deployments</p>`;
+        console.error('Failed to fetch deployments:', e);
       }
+    }
+
+    let myChart = null;
+
+    async function renderChart() {
+        try {
+            const response = await fetch('/api/deployments');
+            const data = await response.json();
+
+            // Group the deployments by Environment Name
+            const envCounts = {};
+            data.forEach(dep => {
+                const env = dep.EnvironmentName || 'Unknown';
+                envCounts[env] = (envCounts[env] || 0) + 1;
+            });
+
+            const ctx = document.getElementById('deploymentChart').getContext('2d');
+            
+            // Destroy existing chart instance to prevent hover-glitches during auto-polling
+            if (myChart) {
+                myChart.destroy();
+            }
+
+            // Render the new Doughnut chart
+            myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: Object.keys(envCounts),
+                    datasets: [{
+                        data: Object.values(envCounts),
+                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6'],
+                        borderWidth: 0,
+                        hoverOffset: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { color: '#cbd5e1' } }
+                    },
+                    cutout: '70%' // Makes it a sleek ring instead of a thick pie
+                }
+            });
+        } catch (err) {
+            console.error("Failed to render chart:", err);
+        }
     }
 
     async function fetchEvents() {
@@ -1065,8 +1392,75 @@
       }
     }
 
+    // Rolling arrays to hold the last 20 data points
+    const dataPoints = 20;
+    let cpuData = Array(dataPoints).fill(0);
+    let memData = Array(dataPoints).fill(0);
+    let sparklineCharts = {};
+
+    function initSparklines() {
+      const sparklineOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
+        scales: {
+          x: { display: false },
+          y: { display: false, min: 0, max: 100 }
+        },
+        elements: {
+          point: { radius: 0 },
+          line: { borderWidth: 2, tension: 0.3 }
+        },
+        animation: { duration: 0 }
+      };
+
+      const cpuCtx = document.getElementById('cpuSparkline').getContext('2d');
+      sparklineCharts.cpu = new Chart(cpuCtx, {
+        type: 'line',
+        data: { labels: Array(dataPoints).fill(''), datasets: [{ data: cpuData, borderColor: '#10b981' }] },
+        options: sparklineOptions
+      });
+
+      const memCtx = document.getElementById('memSparkline').getContext('2d');
+      sparklineCharts.memory = new Chart(memCtx, {
+        type: 'line',
+        data: { labels: Array(dataPoints).fill(''), datasets: [{ data: memData, borderColor: '#8b5cf6' }] },
+        options: sparklineOptions
+      });
+    }
+
+    async function updateMetrics() {
+      try {
+        const response = await fetch('/api/metrics');
+        const data = await response.json();
+
+        const latestCpu = data.cpu || data[0]?.cpu || 0;
+        const latestMem = data.memory || data[0]?.memory || 0;
+
+        document.getElementById('cpuValue').innerText = `${latestCpu}%`;
+        document.getElementById('memValue').innerText = `${latestMem}%`;
+
+        cpuData.push(latestCpu);
+        cpuData.shift();
+        sparklineCharts.cpu.update();
+
+        memData.push(latestMem);
+        memData.shift();
+        sparklineCharts.memory.update();
+      } catch (err) {
+        console.error('Failed to fetch telemetry for sparklines:', err);
+      }
+    }
+
+    initSparklines();
+    updateMetrics();
+    setInterval(updateMetrics, 5000);
+
     // Auto-refresh the dashboard every 5 seconds
     setInterval(fetchDeployments, 5000);
+
+    // added the new feature on the live dashboard to render the deployments by environment chart
+    setInterval(renderChart, 10000); // Refresh chart every 10 seconds
 
     window.onload = init;
   </script>

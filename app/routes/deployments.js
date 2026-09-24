@@ -69,6 +69,7 @@ router.get('/api/deployments', async (req, res) => {
         e.Name AS EnvironmentName,
         d.AppName,
         d.RequestedBy,
+        d.Description, -- <-- Add this line
         d.Status,
         d.StartedAt,
         d.CompletedAt
