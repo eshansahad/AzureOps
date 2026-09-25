@@ -1,4 +1,3 @@
-```markdown
 #  AzureOps Portal
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen?style=for-the-badge&logo=githubactions)](https://github.com/actions)
